@@ -1,0 +1,6 @@
+# Name pairs that `sermon-pipeline review-names` flagged and a human confirmed are DIFFERENT.
+# (Same person/series? Add an alias in sources/<church>.toml instead.)
+#
+# [[speaker.distinct]]
+# names = ["John Smith", "Jon Smith"]
+# note = "two different people; checked church staff page 2026-11-16"

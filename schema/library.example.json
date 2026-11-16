@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-11-16T00:00:00Z",
+  "churches": [
+    {
+      "id": "example-church",
+      "name": "Example Church",
+      "location": "Springfield, USA",
+      "websiteUrl": "https://example.com"
+    }
+  ],
+  "speakers": [
+    { "id": "jane-doe", "name": "Jane Doe" },
+    { "id": "john-smith", "name": "John Smith" }
+  ],
+  "series": [
+    {
+      "id": "example-church-rom-2025-the-gospel-of-god",
+      "title": "The Gospel of God",
+      "description": "A journey through Paul's letter to the Romans.",
+      "book": "Rom",
+      "churchId": "example-church",
+      "speakerIds": ["jane-doe", "john-smith"],
+      "artworkUrl": "https://example.com/series/romans/artwork.jpg",
+      "sourceUrl": "https://example.com/series/romans",
+      "startDate": "2025-01-05",
+      "endDate": "2025-02-02",
+      "isComplete": true,
+      "sermons": [
+        {
+          "id": "example-church-1001",
+          "title": "Called to Belong",
+          "date": "2025-01-05",
+          "speakerId": "jane-doe",
+          "passage": { "book": "Rom", "startChapter": 1, "startVerse": 1, "endChapter": 1, "endVerse": 17, "display": "Romans 1:1–17" },
+          "durationSeconds": 2460,
+          "sourceUrl": "https://example.com/sermons/called-to-belong",
+          "media": { "audioUrl": "https://example.com/audio/romans-01.mp3" }
+        },
+        {
+          "id": "example-church-1002",
+          "title": "Without Excuse",
+          "date": "2025-01-12",
+          "speakerId": "john-smith",
+          "passage": { "book": "Rom", "startChapter": 1, "startVerse": 18, "endChapter": 2, "endVerse": 16, "display": "Romans 1:18–2:16" },
+          "durationSeconds": 2310,
+          "media": { "audioUrl": "https://example.com/audio/romans-02.mp3", "youtubeId": "abcdefghijk" }
+        },
+        {
+          "id": "example-church-1003",
+          "title": "All Have Sinned",
+          "date": "2025-01-19",
+          "speakerId": "jane-doe",
+          "passage": { "book": "Rom", "startChapter": 3, "endChapter": 3, "display": "Romans 3" },
+          "media": { "videoUrl": "https://example.com/video/romans-03.mp4" }
+        },
+        {
+          "id": "example-church-1004",
+          "title": "Blessed Is the One Forgiven",
+          "date": "2025-01-26",
+          "speakerId": "john-smith",
+          "passage": { "book": "Ps", "startChapter": 32, "endChapter": 32, "display": "Psalm 32" },
+          "media": { "audioUrl": "https://example.com/audio/romans-interlude.mp3" }
+        },
+        {
+          "id": "example-church-1005",
+          "title": "Credited as Righteousness",
+          "date": "2025-02-02",
+          "speakerId": "jane-doe",
+          "passage": { "book": "Rom", "startChapter": 4, "endChapter": 4, "display": "Romans 4" },
+          "media": { "audioUrl": "https://example.com/audio/romans-04.mp3" }
+        }
+      ]
+    }
+  ]
+}

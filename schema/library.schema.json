@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sermon-library/schema/library.schema.json",
+  "title": "Sermon Library",
+  "description": "The single contract between the pipeline (writer) and the app (reader). Book-by-book sermon series from a curated set of churches. App screens it serves: search/browse by book, church or speaker -> list of series for a book -> one series' sermons in preached order (title, passage, preacher, recording date). Rules JSON Schema can't express (enforced by pipeline/src/sermon_pipeline/validate.py): at least 80% of a series' sermons have a passage in the series' book (the rest are kept, in order, with their own book or no passage); each passage.book matches its display; consecutive sermons are at most 1 year apart; a series spans at most 3 years; sermons are in date order; all ids resolve.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "generatedAt", "churches", "speakers", "series"],
+  "properties": {
+    "schemaVersion": {
+      "description": "Semver of this schema. Major bump = breaking change for the app.",
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "generatedAt": {
+      "description": "UTC timestamp of the pipeline run that produced this file.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "churches": {
+      "description": "Search/browse by church: filter series on series.churchId.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/church" }
+    },
+    "speakers": {
+      "description": "Search/browse by speaker: filter series on series.speakerIds. Speakers are global (not tied to one church) because preachers move and guest-preach.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/speaker" }
+    },
+    "series": {
+      "description": "Search/browse by book: filter on series.book. Display names and canonical order come from schema/books.json.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/series" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "description": "Stable kebab-case slug. Never changes once published (app stores it for favourites / progress).",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 120
+    },
+    "httpsUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://"
+    },
+    "isoDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "bookCode": {
+      "description": "OSIS book code; must match schema/books.json (checked by pipeline tests).",
+      "enum": [
+        "Gen", "Exod", "Lev", "Num", "Deut", "Josh", "Judg", "Ruth", "1Sam", "2Sam",
+        "1Kgs", "2Kgs", "1Chr", "2Chr", "Ezra", "Neh", "Esth", "Job", "Ps", "Prov",
+        "Eccl", "Song", "Isa", "Jer", "Lam", "Ezek", "Dan", "Hos", "Joel", "Amos",
+        "Obad", "Jonah", "Mic", "Nah", "Hab", "Zeph", "Hag", "Zech", "Mal",
+        "Matt", "Mark", "Luke", "John", "Acts", "Rom", "1Cor", "2Cor", "Gal", "Eph",
+        "Phil", "Col", "1Thess", "2Thess", "1Tim", "2Tim", "Titus", "Phlm", "Heb", "Jas",
+        "1Pet", "2Pet", "1John", "2John", "3John", "Jude", "Rev"
+      ]
+    },
+    "passage": {
+      "description": "Contiguous range within one book. Usually series.book; an interlude sermon (e.g. a Psalm in a Mark series) has its own book. Omit verses for whole-chapter ranges.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["book", "startChapter", "endChapter", "display"],
+      "properties": {
+        "book": { "$ref": "#/$defs/bookCode" },
+        "startChapter": { "type": "integer", "minimum": 1 },
+        "startVerse": { "type": "integer", "minimum": 1 },
+        "endChapter": { "type": "integer", "minimum": 1 },
+        "endVerse": { "type": "integer", "minimum": 1 },
+        "display": {
+          "description": "Human-readable reference as printed by the source, e.g. \"Romans 1:1–17\". Shown separately from the sermon title, which often isn't the passage.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "church": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "websiteUrl"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "location": { "description": "City, region/country for display.", "type": "string" },
+        "websiteUrl": { "$ref": "#/$defs/httpsUrl" },
+        "logoUrl": { "$ref": "#/$defs/httpsUrl" }
+      }
+    },
+    "speaker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "photoUrl": { "$ref": "#/$defs/httpsUrl" }
+      }
+    },
+    "series": {
+      "description": "One church preaching through (part of) ONE book. A church may have several series on the same book (e.g. Romans in 1985 and 2012); each is its own entry.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "book", "churchId", "speakerIds", "sourceUrl", "startDate", "endDate", "sermons"],
+      "properties": {
+        "id": {
+          "description": "<church>-<book>-<startYear>-<slug(title)>.",
+          "$ref": "#/$defs/id"
+        },
+        "title": { "description": "Series name as the church gave it.", "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "book": { "$ref": "#/$defs/bookCode" },
+        "churchId": { "$ref": "#/$defs/id" },
+        "speakerIds": {
+          "description": "Everyone who preached in the series: most sermons first, ties by first appearance. One or many.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "artworkUrl": { "$ref": "#/$defs/httpsUrl" },
+        "sourceUrl": {
+          "description": "The church's page for this series, else its media page (attribution + 'open on website').",
+          "$ref": "#/$defs/httpsUrl"
+        },
+        "startDate": { "description": "Date of the first sermon.", "$ref": "#/$defs/isoDate" },
+        "endDate": { "description": "Date of the last sermon; at most 3 years after startDate.", "$ref": "#/$defs/isoDate" },
+        "isComplete": {
+          "description": "False while the church may still be preaching through it (last sermon within 28 days of generatedAt).",
+          "type": "boolean"
+        },
+        "sermons": {
+          "description": "In preached order (by date, then the church's own media id). Includes the occasional off-book or reference-less sermon in the middle of a run; check passage.book against series.book to mark them.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/sermon" }
+        }
+      }
+    },
+    "sermon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "date", "speakerId", "media"],
+      "properties": {
+        "id": { "description": "<church>-<church's media id>.", "$ref": "#/$defs/id" },
+        "title": { "description": "As the church titled it; not necessarily the passage.", "type": "string", "minLength": 1 },
+        "date": { "description": "Date preached / recorded.", "$ref": "#/$defs/isoDate" },
+        "speakerId": { "description": "The preacher.", "$ref": "#/$defs/id" },
+        "passage": {
+          "description": "The reference the source printed, preferring one in series.book. Omitted when the source printed none (never guessed).",
+          "$ref": "#/$defs/passage"
+        },
+        "durationSeconds": { "type": "integer", "minimum": 1 },
+        "sourceUrl": { "$ref": "#/$defs/httpsUrl" },
+        "media": {
+          "description": "At least one playable source. We link to the church's hosting; we never rehost.",
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "audioUrl": { "$ref": "#/$defs/httpsUrl" },
+            "videoUrl": { "$ref": "#/$defs/httpsUrl" },
+            "youtubeId": { "type": "string", "pattern": "^[A-Za-z0-9_-]{11}$" }
+          }
+        }
+      }
+    }
+  }
+}
