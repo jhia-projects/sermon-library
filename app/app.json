@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Sermon Library",
+    "slug": "sermon-library",
+    "scheme": "sermonlibrary",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {},
+    "plugins": [
+      "expo-router",
+      "expo-audio"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
