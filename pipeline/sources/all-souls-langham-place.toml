@@ -27,14 +27,18 @@ min_book_share = 0.8
 exclude = [
     "World Mission Sunday",  # annual occasion; its sermons happen to share a book some years
 ]
-# Exclude series whose name contains any of these (case-insensitive): the Christmas period.
-exclude_patterns = ["christmas", "carol", "advent"]
+# Exclude series whose name contains any of these (case-insensitive): the Christmas and Easter
+# seasons ("Easter" 2022 published two Luke 24 sermons as a book series before "easter" was added).
+exclude_patterns = ["christmas", "carol", "advent", "easter"]
 
 [aliases.series]
 # Spelling variants seen in the source -> canonical name. Case/punctuation differences are handled automatically.
 "No Favorites" = "No Favourites"
 "Children of Light" = "Children of the Light"
 "Who Do You Say I Am" = "Who Do You Say That I Am"
+"Moderns Lessons From an Ancient Flood" = "Modern Lessons From an Ancient Flood"  # typo in source, Nov 2024
+"Romans 5: The Truly Free Life" = "Romans: The Truly Free Life"  # one series, Sep-Oct 2023
+"Matthew 4" = "Matthew"  # Sep-Oct 2023: rows labelled "Matthew 4" and "Matthew" all link the site's "Matthew" series page
 
 [aliases.speaker]
 # Variant -> canonical. Find candidates with `sermon-pipeline review-names out/library.json`.

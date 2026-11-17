@@ -159,6 +159,9 @@ def parse_media_listing(html: str, page_url: str) -> list[RawSermon]:
                 duration_seconds=duration,
                 image_url=_https(urljoin(page_url, img["src"])) if img else None,
                 series_url=_https(series_url),
+                # Listing rows link to no page of their own (the feed's Player.aspx link exists only for
+                # feed items), so attribute to the series page that lists the sermon, when the row links one.
+                source_url=_https(series_url),
             )
         )
     return out
@@ -194,6 +197,7 @@ def parse_series_page(html: str, page_url: str) -> list[RawSermon]:
                 audio_url=_https(_download_url(page_url, media_id, file_id)),
                 image_url=_https(urljoin(page_url, img["src"])) if img else None,
                 series_url=_https(page_url),
+                source_url=_https(page_url),  # the series page this sermon is listed (and playable) on
             )
         )
     return out

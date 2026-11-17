@@ -93,6 +93,8 @@ def test_parse_media_listing():
     assert jonah.origin == "scrape"
     assert jonah.title == "Jonah (1)"
     assert jonah.series_url == "https://www.allsouls.org/Groups/472096/Jonah.aspx"
+    # Listing rows have no page of their own: attribute to the series page that lists them.
+    assert jonah.source_url == jonah.series_url
     assert jonah.youtube_id == "KdHSvINr5-I"
     assert jonah.date == date(2026, 11, 15)
     assert jonah.passage_text == "Jonah 1"  # first reference only (second is Mark 3:35-41)
@@ -103,7 +105,7 @@ def test_parse_series_page():
     url = "https://www.allsouls.org/Groups/468891/No_Favourites.aspx"
     items = parse_series_page((AS / "group_no_favourites.html").read_text(encoding="utf-8"), url)
     assert len(items) == 7
-    assert all(i.series_url == url and i.origin == "scrape" for i in items)
+    assert all(i.series_url == url and i.source_url == url and i.origin == "scrape" for i in items)
     assert [i.passage_text for i in items][-1] == "Acts 9:32–43"
     assert items[0].date == date(2026, 10, 25)
     assert items[0].audio_url.startswith("https://www.allsouls.org/Media/PlayMedia.aspx?download=file&media_id=")
