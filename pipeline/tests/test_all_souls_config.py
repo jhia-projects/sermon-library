@@ -150,3 +150,72 @@ def test_evangelistic_and_occasion_series_excluded(all_souls):
     titles, report = _titles(all_souls, sermons)
     assert titles == {}
     assert sum(v == "excluded in config" for v in report.skipped_series.values()) == 4
+
+
+def test_older_seasonal_series_excluded_matthews_passion_2006_kept(all_souls):
+    """Full archive (2026-11-19): Lent/Easter, Christmas and New Year series from before 2013, by name.
+
+    'Matthew's Passion' 2006 is kept like the 2014 one, and 'A Church's New Year Resolutions' (Romans 12
+    in 8 parts) is kept as an exception to the New Year exclusions: owner decisions.
+    """
+    sermons = [
+        *_pair("a", date(2005, 3, 6), ["John 18:1-11", "John 18:12-27"], "Words of Life (The Passion of Christ from John's Gospel)"),
+        *_pair("b", date(2007, 3, 4), ["Luke 22:39-46", "Luke 23:26-43"], "When Darkness Reigns"),
+        *_pair("c", date(2012, 11, 22), ["Luke 1:26-38", "Luke 2:1-20"], "When a Child is Born"),
+        *_pair("d", date(2005, 1, 6), ["Luke 5:1-11", "Luke 5:27-32"], "New Year Revolutions"),
+        *_pair("e", date(2006, 3, 26), ["Matthew 26:1-16", "Matthew 26:17-30"], "Matthew's Passion"),
+        *_pair("f", date(2003, 1, 5), ["Romans 12:1", "Romans 12:1-2"], "A Church's New Year Resolutions"),
+    ]
+    titles, report = _titles(all_souls, sermons)
+    assert titles == {"Matthew's Passion": 2, "A Church's New Year Resolutions": 2}
+    for name in ["When Darkness Reigns", "When a Child is Born", "New Year Revolutions"]:
+        assert report.skipped_series[name] == "excluded in config"
+
+
+def test_occasion_patterns_catch_any_year(all_souls):
+    """'World Mission Sunday 2010' got past the exact name; occasions are now matched as substrings."""
+    sermons = [
+        *_pair("a", date(2010, 9, 19), ["Matthew 28:16-20", "Matthew 9:35-38"], "World Mission Sunday 2010"),
+        *_pair("b", date(2010, 2, 7), ["1 Thessalonians 1", "1 Thessalonians 2"], "World Focus Sunday"),
+        *_pair("c", date(2011, 6, 19), ["Colossians 1:1-14", "Colossians 3:12-17"], "Thanksgiving and Gift Day"),
+        *_pair("d", date(2013, 3, 29), ["John 19:1-16", "John 19:17-30"], "Good Friday Service"),
+        *_pair("e", date(2007, 6, 10), ["1 Corinthians 12", "1 Corinthians 13"], "Workplace Sunday"),
+        *_pair("f", date(2011, 7, 5), ["Genesis 37", "Genesis 39"], "Men's Week-end Away 2011"),
+    ]
+    titles, _ = _titles(all_souls, sermons)
+    assert titles == {}
+
+
+def test_words_from_the_mountain_variants_are_one_series(all_souls):
+    """Apr-Jun 1991: '...Ten Commandment)' and '...Ten Commandments)' rows interleave through Exodus 20."""
+    a, b = "Words from the Mountain (Studies in the Ten Commandments)", "Words from the Mountain (Studies in the Ten Commandment)"
+    sermons = [
+        _s(1, date(1991, 4, 14), "Exodus 20", a), _s(2, date(1991, 4, 21), "Exodus 20", a),
+        _s(3, date(1991, 4, 28), "Exodus 20:7", b), _s(4, date(1991, 5, 5), "Exodus 20", a),
+    ]
+    titles, _ = _titles(all_souls, sermons)
+    assert titles == {a: 4}
+
+
+def test_flawed_heroes_variants_are_one_series(all_souls):
+    """1995: Judges 2 and 4 under the long label, then Judges 6-16 under 'Flawed Heroes'."""
+    full = "Flawed Heroes (Studies from the book of Judges)"
+    sermons = [
+        _s(1, date(1995, 2, 26), "Judges 2", full), _s(2, date(1995, 3, 12), "Judges 4", full),
+        _s(3, date(1995, 3, 19), "Judges 6", "Flawed Heroes"), _s(4, date(1995, 3, 26), "Judges 7", "Flawed Heroes"),
+    ]
+    titles, _ = _titles(all_souls, sermons)
+    assert titles == {full: 4}
+
+
+def test_teaching_day_ordered_by_talk_number(all_souls):
+    """'Romansfest' (2001-03-01): every talk has the same date and media ids don't follow the talk numbers."""
+    talks = [(62560, 3, "Romans 2:1-29"), (62704, 2, "Romans 1:16-32"), (94478, 1, "Romans 1:1-15"), (70574, 4, "Romans 3:1-20")]
+    sermons = []
+    for key, n, passage in talks:
+        s = _s(key, date(2001, 3, 1), passage, "Romansfest")
+        s.title = f"Romansfest Talk {n}"
+        sermons.append(s)
+    church, _ = build_church(all_souls, sermons, TODAY)
+    [series] = church["series"]
+    assert [m["title"] for m in series["sermons"]] == [f"Romansfest Talk {n}" for n in (1, 2, 3, 4)]

@@ -4,3 +4,20 @@
 # [[speaker.distinct]]
 # names = ["John Smith", "Jon Smith"]
 # note = "two different people; checked church staff page 2026-11-16"
+
+# All Souls, confirmed different by the project owner 2026-11-19 (full archive build)
+[[series.distinct]]
+names = ["The Secret of Contentment", "The secret to contentment"]
+note = "Philippians, 2008 and 2016: separate series eight years apart"
+
+[[series.distinct]]
+names = ["Face to Face (Encounters in John's Gospel)", "Face to Face (Interviews with Jesus in John's Gospel)"]
+note = "John, 1998 and 2001: separate series"
+
+[[series.distinct]]
+names = ["For me to live is Christ", "To Me To Live is Christ"]
+note = "Philippians, 1979-80 (19 talks) and 1990 (4 talks): separate series"
+
+[[series.distinct]]
+names = ["A STING IN THE TALE", "A Winter's Tale"]
+note = "Luke, 2012 and 2018 vs 1995: different series that share a word"

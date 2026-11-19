@@ -99,6 +99,10 @@ def test_parse_media_listing():
     assert jonah.date == date(2026, 11, 15)
     assert jonah.passage_text == "Jonah 1"  # first reference only (second is Mark 3:35-41)
     assert jonah.duration_seconds == 1729
+    # A row with no series link (a one-off) is attributed to the listing page it was found on.
+    one_off = next(r for r in rows if r.source_key == "371345")
+    assert one_off.series_url is None
+    assert one_off.source_url == "https://www.allsouls.org/Media/AllMedia.aspx"
 
 
 def test_parse_series_page():

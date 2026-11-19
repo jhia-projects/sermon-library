@@ -25,7 +25,6 @@ series_pages = []
 min_book_share = 0.8
 # Exclude series by exact name (after aliasing).
 exclude = [
-    "World Mission Sunday",  # annual occasion; its sermons happen to share a book some years
     "The John Stott Centenary",  # Apr 2021: two occasion sermons the same day, both on Ephesians
     "Questions From the Cross",  # Apr 2022: Holy Week to Easter Sunday (Luke 22-24), seasonal
     # Lent-to-Easter series (owner decision 2026-11-17: all excluded except "Matthew's Passion", 2014,
@@ -35,16 +34,50 @@ exclude = [
     "Series from Luke's Gospel",  # Apr 2017, Luke 19-24
     "At the End?",  # 1995, Luke 23
     "The Glory of the Cross",  # Mar 2016, John 12
+    "The Confidence of the Cross",  # Mar 2010, 1 John
+    "Resurrection Commands",  # Apr 2007, John 20-21
+    "The Passion of the Christ",  # Mar-Apr 2007, Matthew
+    "When Darkness Reigns",  # Mar-Apr 2007, Luke 22-23
+    "Words of Life (The Passion of Christ from John's Gospel)",  # Mar-Apr 2005
+    "The Demonstration of the Cross",  # Mar 2005, Romans 3
+    "Resurrection Reports",  # Apr 2004, Luke 24
+    "The Road to the Cross",  # Mar-Apr 2004, Luke
+    "Jesus, Despised and Rejected",  # Mar-Apr 2001, Matthew 26-28
+    "A Day That Changed the World (Studies from Luke 24)",  # Apr 1995
+    "Questions on the Resurrection",  # Apr 1993, 1 Corinthians 15
+    "Response to the Resurrection",  # Apr 1980, John 20-21
+    "After the Resurrection",  # Apr 1978, Luke 24
+    # ("Matthew's Passion" 2006 and 2014 are kept: owner decision 2026-11-19)
+    # Christmas-season series whose names don't say "Christmas"
+    "When a Child is Born",  # Nov-Dec 2012, Luke 1-2
+    "Saviour of the World (The Birth of Christ)",  # Dec 1992
+    "We Have Beheld His Glory",  # Dec 1991, John 1
+    "God Became Man",  # Dec 1986, two John 1 sermons on one day
+    # New Year series. Excluded by name, not by a "new year" pattern, so that "A Church's New Year
+    # Resolutions" (Jan-Feb 2003, Romans 12:1-21 in 8 parts) stays: owner decision 2026-11-19.
+    "Happy New Year",  # Jan 2012, Psalms
+    "New Year Services",  # yearly 31 Dec services
+    "Prayers for a New Year",  # Jan 2011, Ephesians
+    "New Year Foundations",  # Jan 2007, Mark
+    "New Year Revolutions",  # Jan 2005, Luke
+    "Resolutions for a New Year",  # Jan 2017
     # Evangelistic and occasion series: passages picked for a theme, often two talks on one day
     "The Time of Your Life",  # 1992, Luke 8/2/22/24
     "Right at the Centre",  # 1994, Luke 12/5/16/15
     "A Fresh Start to the Year",  # 1992, Matthew 4 and 9 on one day
-    "Workplace Sunday (Advice from the Boss)",  # 2008, Matthew 6 and 5 on one day
+    "Invitation Lunch",  # 1999 and 2000: one evangelistic talk a year
+    "Men's Week-end Away 2011",  # retreat: three Joseph talks on one day
+    "From Ascension to Pentecost",  # May 2010: church-year season
 ]
 # Exclude series whose name contains any of these (case-insensitive): the Christmas and Easter
 # seasons ("Easter" 2022 published two Luke 24 sermons as a book series before "easter" was added).
 # "guest service": evangelistic services ("Guest Service" Oct 2021, Luke 2/12/23) aren't book studies.
-exclude_patterns = ["christmas", "carol", "advent", "easter", "guest service"]
+# Occasions, whatever the year in the name: "World Mission Sunday 2010", "World Focus Sunday",
+# "Workplace Sunday (Advice from the Boss)", "Thanksgiving and Gift Day", Good Friday services.
+exclude_patterns = [
+    "christmas", "carol", "advent", "easter", "guest service",
+    "good friday", "world mission", "world focus", "workplace sunday", "gift day",
+]
 
 [aliases.series]
 # Spelling variants seen in the source -> canonical name. Case/punctuation differences are handled automatically.
@@ -55,6 +88,8 @@ exclude_patterns = ["christmas", "carol", "advent", "easter", "guest service"]
 "Romans 5: The Truly Free Life" = "Romans: The Truly Free Life"  # one series, Sep-Oct 2023
 "Inheritors of the Promise" = "Inheriting the Promise"  # Joshua 7-12 (Jan-Feb 2014) fills Joshua 1-6 (2013) / 13-24 (2014)
 "A CHURCH FOR ALL" = "CHURCH FOR ALL"  # Ephesians 1-3 (Oct-Nov 2018) then 3-6 (Jan-Mar 2019): one series
+"Words from the Mountain (Studies in the Ten Commandment)" = "Words from the Mountain (Studies in the Ten Commandments)"  # Exodus 20, Apr-Jun 1991: rows interleave
+"Flawed Heroes" = "Flawed Heroes (Studies from the book of Judges)"  # Judges 2-4 (Feb-Mar 1995) then 6-16 (Mar-Apr 1995)
 "Matthew 4" = "Matthew"  # Sep-Oct 2023: rows labelled "Matthew 4" and "Matthew" all link the site's "Matthew" series page
 
 [aliases.speaker]

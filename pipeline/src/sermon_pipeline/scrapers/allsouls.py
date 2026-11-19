@@ -172,8 +172,8 @@ def parse_media_listing(html: str, page_url: str) -> list[RawSermon]:
                 image_url=_https(urljoin(page_url, img["src"])) if img else None,
                 series_url=_https(series_url),
                 # Listing rows link to no page of their own (the feed's Player.aspx link exists only for
-                # feed items), so attribute to the series page that lists the sermon, when the row links one.
-                source_url=_https(series_url),
+                # feed items): attribute to the series page that lists the sermon, else to the listing page.
+                source_url=_https(series_url or page_url),
             )
         )
     return out
