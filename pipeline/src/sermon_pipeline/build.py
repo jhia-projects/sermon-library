@@ -69,6 +69,10 @@ def build_church(cfg: SourceConfig, sermons: list[RawSermon], today: date) -> tu
     excluded = {series_key(aliases.get(series_key(n), n)) for n in cfg.exclude_series}
 
     def canonical(name: str) -> str:
+        if cfg.one_per_service_half:
+            # "The gospel goes viral (4pm)" + "(6pm)": one series run at two services, labelled
+            # per service. Merge them; _one_per_service_half then keeps one copy per date.
+            name = strip_service_suffix(name)
         return aliases.get(series_key(name), name)
 
     explicit_keys = {
@@ -128,6 +132,15 @@ def build_church(cfg: SourceConfig, sermons: list[RawSermon], today: date) -> tu
 
 
 _SERVICE_TIME = re.compile(r"^(\d{1,2})(?:[.:](\d{2}))?\s*(am|pm)$", re.IGNORECASE)
+
+
+_SERVICE_SUFFIX = re.compile(r"\s*\(\s*(\d{1,2}(?:[.:]\d{2})?\s*(?:am|pm))\s*\)\s*$", re.IGNORECASE)
+
+
+def strip_service_suffix(name: str) -> str:
+    """'Pilgrim psalms (4pm)' -> 'Pilgrim psalms'. Only a bracketed time at the very end."""
+    m = _SERVICE_SUFFIX.search(name)
+    return name[: m.start()] if m and service_minutes(m[1]) is not None else name
 
 
 def service_minutes(text: str | None) -> int | None:

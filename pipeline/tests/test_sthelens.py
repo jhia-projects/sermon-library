@@ -404,3 +404,32 @@ def test_copy_without_a_service_time_is_never_dropped():
     unknown = [dataclasses.replace(s, service_time=None, provenance={}) for s in base]
     church, report = build_church(cfg, unknown, date(2026, 11, 19))
     assert not report.repeated_services and len(church["series"][0]["sermons"]) == 2
+
+
+@pytest.mark.parametrize(
+    "name, out",
+    [("The gospel goes viral (4pm)", "The gospel goes viral"), ("God's king rising (10am)", "God's king rising"),
+     ("Christianity 101 (10.30am)", "Christianity 101"), ("The knowledge of God: 4pm weekend", "The knowledge of God: 4pm weekend"),
+     ("Psalms (part 2)", "Psalms (part 2)"), ("Acts (13pm)", "Acts (13pm)")],
+)
+def test_strip_service_suffix(name, out):
+    from sermon_pipeline.build import strip_service_suffix
+    assert strip_service_suffix(name) == out
+
+
+def test_series_labelled_per_service_merge_into_one():
+    # Motivating case (2021-09 on): the church labelled "The gospel goes viral (4pm)" and "(6pm)"
+    # separately, so the same Acts series was published twice.
+    cfg = load_source(SOURCES_DIR / "st-helens-bishopsgate.toml")
+    base = feed_series()[0]
+    rows = []
+    for i, (d, t) in enumerate([(5, "4pm"), (5, "6pm"), (12, "4pm"), (12, "6pm")]):
+        rows.append(dataclasses.replace(
+            base, source_key=str(100 + i), date=date(2021, 9, d), service_time=t, passage_text=f"Acts {d}:1-10",
+            listed_references=None, series_name=f"The gospel goes viral ({t})", provenance={}))
+    church, report = build_church(cfg, rows, date(2026, 11, 19))
+    (se,) = church["series"]
+    assert se["title"] == "The gospel goes viral" and [s["id"][-3:] for s in se["sermons"]] == ["100", "102"]
+    assert report.repeated_services == {"The gospel goes viral": 2}
+    off = dataclasses.replace(cfg, one_per_service_half=False)
+    assert len(build_church(off, rows, date(2026, 11, 19))[0]["series"]) == 2
