@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
@@ -133,7 +134,9 @@ def _split_runs(members: list[RawSermon]) -> list[list[RawSermon]]:
 
     A name reused after a longer silence starts a new series (e.g. 'Romans' in 1985 and 2012).
     """
-    dated = sorted((m for m in members if m.date), key=lambda m: (m.date, _media_order(m.source_key)))
+    dated = sorted(
+        (m for m in members if m.date), key=lambda m: (m.date, _talk_number(m.title), _media_order(m.source_key))
+    )
     runs: list[list[RawSermon]] = []
     for m in dated:
         if runs and (m.date - runs[-1][-1].date).days <= LOOK_FORWARD_DAYS:
@@ -141,6 +144,16 @@ def _split_runs(members: list[RawSermon]) -> list[list[RawSermon]]:
         else:
             runs.append([m])
     return runs
+
+
+# Several talks on one date (a teaching day: "Romansfest Talk 1" ... "Talk 19", all 2001-03-01) are
+# ordered by the number the source prints at the end of the title; their media ids don't follow it.
+_TALK_NUMBER = re.compile(r"\bTalk\s+(\d+)\s*$", re.IGNORECASE)
+
+
+def _talk_number(title: str | None) -> int:
+    m = _TALK_NUMBER.search(title or "")
+    return int(m[1]) if m else 0
 
 
 def _media_order(key: str) -> tuple[int, str]:

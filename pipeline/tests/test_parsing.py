@@ -6,7 +6,7 @@ import pytest
 
 from sermon_pipeline.normalize import parse_duration, parse_series_label, split_title_and_passage
 from sermon_pipeline.rss import FeedError, parse_feed
-from sermon_pipeline.scrapers.allsouls import parse_media_listing, parse_series_page
+from sermon_pipeline.scrapers.allsouls import parse_length, parse_media_listing, parse_series_page
 from sermon_pipeline.scripture import parse_reference
 
 from .conftest import AS
@@ -99,6 +99,10 @@ def test_parse_media_listing():
     assert jonah.date == date(2026, 11, 15)
     assert jonah.passage_text == "Jonah 1"  # first reference only (second is Mark 3:35-41)
     assert jonah.duration_seconds == 1729
+    # A row with no series link (a one-off) is attributed to the listing page it was found on.
+    one_off = next(r for r in rows if r.source_key == "371345")
+    assert one_off.series_url is None
+    assert one_off.source_url == "https://www.allsouls.org/Media/AllMedia.aspx"
 
 
 def test_parse_series_page():
@@ -125,6 +129,15 @@ def test_parse_archive_listing_old_format():
     assert r.audio_url == "https://www.allsouls.org/Media/PlayMedia.aspx?download=file&media_id=218870&file_id=232242"
     assert r.series_url == "https://www.allsouls.org/Groups/319032/ZA008_Genesis.aspx"
     assert next(r for r in rows if r.source_key == "218394").title == "Jesus went to the Cross for you"  # quotes stripped
+    assert r.duration_seconds == 29 * 60  # only "Length: 29 minutes" is printed
+
+
+@pytest.mark.parametrize(
+    "text, seconds",
+    [(" 29 minutes", 1740), ("1 minute", 60), ("1 hour 12 minutes", 4320), ("0 minute", None), ("about half an hour", None)],
+)
+def test_parse_length(text, seconds):
+    assert parse_length(text) == seconds
 
 
 def test_books_json_matches_schema_enum():

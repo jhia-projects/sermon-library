@@ -24,6 +24,8 @@ from ..normalize import clean_title, collapse_ws, parse_duration, parse_series_l
 from . import Scraper
 
 _PLAY = re.compile(r"playMedia\(\s*(\d+)\s*,\s*(\d+)")
+# Archive rows give only a rounded length: "Length: 29 minutes", "Length: 1 hour 12 minutes", "Length: 0 minute".
+_LENGTH = re.compile(r"^(?:(\d+)\s*hours?\s*)?(\d+)\s*minutes?$")
 
 
 class AllSoulsScraper(Scraper):
@@ -93,6 +95,14 @@ def page_count(html: str) -> int:
     return len(soup.select("#media_pager_top select option")) or 1
 
 
+def parse_length(text: str) -> int | None:
+    """'29 minutes' / '1 hour 12 minutes' -> seconds. '0 minute' and anything else -> None."""
+    m = _LENGTH.match(text.strip())
+    if not m:
+        return None
+    return (int(m[1] or 0) * 60 + int(m[2])) * 60 or None
+
+
 def _download_url(base: str, media_id: str, file_id: str) -> str:
     return urljoin(base, f"/Media/PlayMedia.aspx?download=file&media_id={media_id}&file_id={file_id}")
 
@@ -134,11 +144,13 @@ def parse_media_listing(html: str, page_url: str) -> list[RawSermon]:
             for a in f.select("a[href]"):
                 yt = yt or youtube_id(a["href"])
 
-        recorded = refs = None
+        recorded = refs = length = None
         for li in row.select("ul.media_recording_details li"):
             text = collapse_ws(li.get_text(" "))
             if text.startswith("Recorded:"):
                 recorded = _parse_date(text.removeprefix("Recorded:").strip(), "%d/%m/%Y")
+            elif text.startswith("Length:"):
+                length = parse_length(text.removeprefix("Length:"))
             elif text.startswith(("References:", "Reference:")):
                 refs = [t for a in li.find_all("a") if (t := _txt(a))]
 
@@ -156,12 +168,12 @@ def parse_media_listing(html: str, page_url: str) -> list[RawSermon]:
                 listed_references="; ".join(refs) if refs else None,
                 audio_url=_https(audio),
                 youtube_id=yt,
-                duration_seconds=duration,
+                duration_seconds=duration or length,  # exact (mm:ss) when printed, else the rounded Length
                 image_url=_https(urljoin(page_url, img["src"])) if img else None,
                 series_url=_https(series_url),
                 # Listing rows link to no page of their own (the feed's Player.aspx link exists only for
-                # feed items), so attribute to the series page that lists the sermon, when the row links one.
-                source_url=_https(series_url),
+                # feed items): attribute to the series page that lists the sermon, else to the listing page.
+                source_url=_https(series_url or page_url),
             )
         )
     return out
