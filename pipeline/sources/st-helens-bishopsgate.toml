@@ -28,3 +28,6 @@ sunday_only = true
 min_book_share = 0.8
 exclude = []
 exclude_patterns = ["christmas", "carol", "advent", "easter"]
+# The same sermon is preached at 9.30am + 11.15am (morning) and 4pm + 6pm (evening). Keep one copy
+# per date per morning/evening: the earliest service.
+one_per_service_half = true

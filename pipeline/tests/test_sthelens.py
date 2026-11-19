@@ -329,3 +329,78 @@ def test_one_empty_feed_of_two_fails_the_build():
 def test_bad_feed_configs_rejected(rss, match):
     with pytest.raises((PolicyError, ValueError), match=match):
         SourceConfig.from_dict({"church": {"id": "x", "name": "X", "websiteUrl": "https://x.org"}, "rss": rss})
+
+
+# --- repeated services (series rule: one copy per date per morning/evening) -----------------
+
+from sermon_pipeline.build import build_church, service_minutes  # noqa: E402
+from sermon_pipeline.config import SOURCES_DIR, load_source  # noqa: E402
+from sermon_pipeline.rss import parse_feed  # noqa: E402
+
+
+@pytest.mark.parametrize(
+    "text, mins",
+    [("9.30am", 570), ("9am", 540), ("11:15am", 675), ("4pm", 960), ("6pm", 1080), ("6.30pm", 1110),
+     ("12 noon", 720), ("12.15pm", 735), (None, None), ("evening", None), ("13pm", None)],
+)
+def test_service_minutes(text, mins):
+    assert service_minutes(text) == mins
+
+
+def test_service_time_from_feed_and_page():
+    items = {s.source_key: s for s in parse_feed((SH / "feed_sunday.xml").read_text(encoding="utf-8"), "sthelens")}
+    assert items["59582"].service_time == "6pm" and items["59579"].service_time == "11:15am"
+    assert talk("59476").service_time == "9.30am"
+
+
+def feed_series() -> list:
+    """The live Sunday feed (2026-11-15 back) with the series its talk pages print."""
+    names = {"John": "God sent his Son", "Luke": "Such a great salvation"}
+    out = []
+    for s in parse_feed((SH / "feed_sunday.xml").read_text(encoding="utf-8"), "sthelens"):
+        book = (s.passage_text or "").split(" ")[0]
+        if book in names:
+            out.append(dataclasses.replace(s, series_name=names[book], series_label_explicit=True, provenance={}))
+    return out
+
+
+def test_repeated_services_keep_one_copy_per_half_day():
+    # Motivating case: John 8:48-59 preached at 9am (59580) and 11:15am (59579) on 15 Nov 2026;
+    # Luke 8:40-56 at 4pm (59573) and 6pm (59574) on 8 Nov. Each Sunday was listed twice.
+    cfg = load_source(SOURCES_DIR / "st-helens-bishopsgate.toml")
+    assert cfg.one_per_service_half
+    church, report = build_church(cfg, feed_series(), date(2026, 11, 19))
+    by_name = {s["title"]: s for s in church["series"]}
+    john, luke = by_name["God sent his Son"], by_name["Such a great salvation"]
+    for se in (john, luke):
+        dates = [x["date"] for x in se["sermons"]]
+        assert len(dates) == len(set(dates)), se["title"]
+    ids = {x["id"] for se in church["series"] for x in se["sermons"]}
+    assert "st-helens-bishopsgate-59580" in ids and "st-helens-bishopsgate-59579" not in ids  # 9am kept
+    assert "st-helens-bishopsgate-59573" in ids and "st-helens-bishopsgate-59574" not in ids  # 4pm kept
+    assert report.dropped_sermons["repeated service"] == sum(report.repeated_services.values()) > 0
+
+
+def test_repeated_services_rule_is_off_by_default():
+    cfg = dataclasses.replace(load_source(SOURCES_DIR / "st-helens-bishopsgate.toml"), one_per_service_half=False)
+    church, report = build_church(cfg, feed_series(), date(2026, 11, 19))
+    assert not report.repeated_services
+    assert sum(len(se["sermons"]) for se in church["series"]) == len(feed_series())
+
+
+def test_morning_and_evening_copies_both_stay():
+    cfg = load_source(SOURCES_DIR / "st-helens-bishopsgate.toml")
+    am, pm = [s for s in feed_series() if s.date == date(2026, 11, 15)][:1] * 2
+    am = dataclasses.replace(am, source_key="1", service_time="10.30am", provenance={})
+    pm = dataclasses.replace(pm, source_key="2", service_time="6.30pm", provenance={})
+    other = dataclasses.replace(am, source_key="3", date=date(2026, 11, 8), provenance={})
+    church, report = build_church(cfg, [am, pm, other], date(2026, 11, 19))
+    assert not report.repeated_services and len(church["series"][0]["sermons"]) == 3
+
+
+def test_copy_without_a_service_time_is_never_dropped():
+    cfg = load_source(SOURCES_DIR / "st-helens-bishopsgate.toml")
+    base = [s for s in feed_series() if s.date == date(2026, 11, 15) and s.passage_text.startswith("John")]
+    unknown = [dataclasses.replace(s, service_time=None, provenance={}) for s in base]
+    church, report = build_church(cfg, unknown, date(2026, 11, 19))
+    assert not report.repeated_services and len(church["series"][0]["sermons"]) == 2

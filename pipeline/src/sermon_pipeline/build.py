@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+
 import logging
 import re
 from collections import Counter, defaultdict
@@ -59,6 +60,7 @@ class BuildReport:
     skipped_series: dict[str, str] = field(default_factory=dict)  # name -> reason
     dropped_sermons: Counter[str] = field(default_factory=Counter)  # reason -> count
     kept_off_book: dict[str, int] = field(default_factory=dict)  # series -> sermons not in its book
+    repeated_services: dict[str, int] = field(default_factory=dict)  # series -> copies dropped
 
 
 def build_church(cfg: SourceConfig, sermons: list[RawSermon], today: date) -> tuple[dict, BuildReport]:
@@ -96,6 +98,8 @@ def build_church(cfg: SourceConfig, sermons: list[RawSermon], today: date) -> tu
         if key in excluded or any(p.casefold() in name.casefold() for p in cfg.exclude_patterns):
             report.skipped_series[name] = "excluded in config"
             continue
+        if cfg.one_per_service_half:
+            members = _one_per_service_half(name, members, report)
         for run in _split_runs(members):
             label = f"{name} ({run[0].date or '?'})"
             built = _build_series(cfg, name, run, today, report, label)
@@ -121,6 +125,51 @@ def build_church(cfg: SourceConfig, sermons: list[RawSermon], today: date) -> tu
     ]
     church = {k: v for k, v in cfg.church.items() if k in {"id", "name", "location", "websiteUrl", "logoUrl"}}
     return {"church": church, "speakers": speakers, "series": series_out}, report
+
+
+_SERVICE_TIME = re.compile(r"^(\d{1,2})(?:[.:](\d{2}))?\s*(am|pm)$", re.IGNORECASE)
+
+
+def service_minutes(text: str | None) -> int | None:
+    """'9.30am' -> 570, '6pm' -> 1080, '12 noon' -> 720. None if not a time."""
+    if not text:
+        return None
+    t = text.strip().casefold()
+    if t in {"noon", "12 noon"}:
+        return 12 * 60
+    m = _SERVICE_TIME.match(t)
+    if m is None:
+        return None
+    h, mins, ampm = int(m[1]), int(m[2] or 0), m[3].casefold()
+    if not 1 <= h <= 12 or mins > 59:
+        return None
+    return (h % 12 + (12 if ampm == "pm" else 0)) * 60 + mins
+
+
+def _one_per_service_half(name: str, members: list[RawSermon], report: BuildReport) -> list[RawSermon]:
+    """Keep one copy per (date, morning|evening) in a series: the earliest service, then lowest id.
+
+    A sermon without a date or a readable service time is never dropped (precision over recall).
+    """
+    best: dict[tuple[date, bool], RawSermon] = {}
+    drop: set[int] = set()
+    for s in members:
+        mins = service_minutes(s.service_time)
+        if s.date is None or mins is None:
+            continue
+        slot = (s.date, mins >= 12 * 60)
+        cur = best.get(slot)
+        if cur is None:
+            best[slot] = s
+            continue
+        rank = lambda x: (service_minutes(x.service_time), _media_order(x.source_key))  # noqa: E731
+        keep, lose = (s, cur) if rank(s) < rank(cur) else (cur, s)
+        best[slot] = keep
+        drop.add(id(lose))
+    if drop:
+        report.repeated_services[name] = len(drop)
+        report.dropped_sermons["repeated service"] += len(drop)
+    return [s for s in members if id(s) not in drop]
 
 
 def _display_name(key: str, spellings: Counter[str], aliases: dict[str, str]) -> str:

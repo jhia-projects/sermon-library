@@ -78,7 +78,9 @@ def parse_talk_page(html: str, url: str) -> RawSermon:
         t = collapse_ws(el.get_text(" ", strip=True)) if el else ""
         return t or None
 
-    when = _parse_date(text("div.date"))
+    date_text = text("div.date")
+    when = _parse_date(date_text)
+    dm = _DATE.match(date_text or "")
     heading = text("h2")
     # <h2> is the site's passage slot. Keep it only if it parses as a reference (rule 5).
     passage = heading if heading and parse_reference(heading) else None
@@ -116,6 +118,7 @@ def parse_talk_page(html: str, url: str) -> RawSermon:
         audio_url=audio,
         source_url=f"{BASE}/resources/talk/{tid}/",
         series_url=series_url,
+        service_time=dm.group(2).strip() if dm and dm.group(2) else None,
     )
 
 
@@ -144,7 +147,7 @@ def _parse_date(s: str | None) -> date | None:
 
 # Fields stored per talk: RawSermon data fields (minus ones talk pages never fill) + service time.
 _SNAPSHOT_FIELDS = ("title", "date", "speaker", "series_name", "series_label_explicit", "passage_text",
-                    "listed_references", "audio_url", "source_url", "series_url")
+                    "listed_references", "audio_url", "source_url", "series_url", "service_time")
 
 
 def snapshot_row(s: RawSermon, html: str) -> dict:
@@ -153,8 +156,6 @@ def snapshot_row(s: RawSermon, html: str) -> dict:
         v = getattr(s, k)
         if v is not None and v is not False:
             row[k] = v.isoformat() if isinstance(v, date) else v
-    if t := page_extras(html)["service_time"]:
-        row["service_time"] = t
     return row
 
 
@@ -174,7 +175,6 @@ def read_snapshot(path: Path) -> list[RawSermon]:
         if not line.strip():
             continue
         r = json.loads(line)
-        r.pop("service_time", None)
         if "date" in r:
             r["date"] = date.fromisoformat(r["date"])
         out.append(RawSermon(origin="scrape", **r))

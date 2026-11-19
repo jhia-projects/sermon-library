@@ -24,6 +24,7 @@ DATA_FIELDS: tuple[str, ...] = (
     "image_url",
     "source_url",
     "series_url",
+    "service_time",
 )
 
 
@@ -53,6 +54,9 @@ class RawSermon:
     image_url: str | None = None
     source_url: str | None = None
     series_url: str | None = None
+    # Service time exactly as printed, e.g. "9.30am", "6pm" (St Helen's prints it per talk). Used
+    # only to spot one sermon repeated at several services; never published.
+    service_time: str | None = None
 
     # field name -> origin that supplied its value. Filled automatically in __post_init__.
     provenance: dict[str, Origin] = field(default_factory=dict)

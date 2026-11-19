@@ -98,6 +98,8 @@ def main(argv: list[str] | None = None) -> int:
                 logging.info("  - %s: %s", name, why)
             for name, n in sorted(report.kept_off_book.items()):
                 logging.info("  ~ %s: kept %d sermon(s) outside its book", name, n)
+            for name, n in sorted(report.repeated_services.items()):
+                logging.info("  = %s: dropped %d repeated-service copies", name, n)
             if report.dropped_sermons:
                 logging.info("  dropped sermons: %s", dict(report.dropped_sermons))
             churches.append(church)

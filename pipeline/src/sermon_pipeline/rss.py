@@ -121,8 +121,10 @@ def _sthelens_item(item: ET.Element) -> RawSermon | None:
     if m is None:
         return None  # without the talk id we can't match it to its page; skip rather than guess
     speaker = _text(item, f"{ITUNES}author")
-    passage = None
+    passage = service = None
     if subtitle := _text(item, f"{ITUNES}subtitle"):
+        if t := re.search(r"\(([^()]*\d[^()]*(?:am|pm))\)\s*$", subtitle):
+            service = t[1].strip()
         head = subtitle.split(" - ", 1)[0].strip()
         # Only a printed reference counts (rule 5); a subtitle without one gives no passage.
         if " - " in subtitle and parse_reference(head):
@@ -143,6 +145,7 @@ def _sthelens_item(item: ET.Element) -> RawSermon | None:
         listed_references=passage,
         audio_url=url,
         duration_seconds=parse_duration(_text(item, f"{ITUNES}duration")),
+        service_time=service,
     )
 
 

@@ -33,6 +33,10 @@ class SourceConfig:
     exclude_series: tuple[str, ...] = ()
     # Case-insensitive substrings of series names to exclude (seasonal: "christmas", "carol").
     exclude_patterns: tuple[str, ...] = ()
+    # One sermon preached at several services on the same day (St Helen's: 9.30am + 11.15am,
+    # 4pm + 6pm) appears once per service. When true, a series keeps one copy per morning and one
+    # per evening service each date: the earliest service.
+    one_per_service_half: bool = False
     series_aliases: dict[str, str] = field(default_factory=dict)
     speaker_aliases: dict[str, str] = field(default_factory=dict)
 
@@ -69,6 +73,7 @@ class SourceConfig:
             min_book_share=float(series.get("min_book_share", 0.8)),
             exclude_series=tuple(series.get("exclude", ())),
             exclude_patterns=tuple(series.get("exclude_patterns", ())),
+            one_per_service_half=bool(series.get("one_per_service_half", False)),
             series_aliases=dict(aliases.get("series", {})),
             speaker_aliases=dict(aliases.get("speaker", {})),
         )
