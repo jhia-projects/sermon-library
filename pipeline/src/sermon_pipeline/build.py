@@ -32,14 +32,15 @@ def collect(
     cfg: SourceConfig, fetcher: Fetcher, *, scrape: bool = True, archive_pages: int = 0
 ) -> tuple[list[RawSermon], policy.MergeReport]:
     rss_items: list[RawSermon] = []
-    if cfg.rss_url:
+    for url in cfg.rss_urls:
         # Any exception here propagates: policy rule 2, never fall back to scraping.
-        rss_items = parse_feed(fetcher.get(cfg.rss_url))
-        policy.require_feed_items(cfg, rss_items)
+        items = parse_feed(fetcher.get(url), cfg.rss_format)
+        policy.require_feed_items(cfg, items, url)
+        rss_items.extend(items)
 
     scraped: list[RawSermon] = []
     if scrape and cfg.scraper:
-        scraper = get_scraper(cfg.scraper)(cfg, fetcher, archive_pages=archive_pages)
+        scraper = get_scraper(cfg.scraper)(cfg, fetcher, archive_pages=archive_pages, rss_items=rss_items)
         scraped = scraper.run()
         log.info("%s: scraper fetched %d pages", cfg.church_id, scraper.pages_fetched)
 

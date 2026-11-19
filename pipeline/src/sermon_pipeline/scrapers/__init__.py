@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import ClassVar
 
 from ..config import SourceConfig
@@ -13,9 +14,19 @@ from ..policy import check_page_for_feed
 class Scraper:
     name: ClassVar[str]
 
-    def __init__(self, cfg: SourceConfig, fetcher: Fetcher, *, archive_pages: int = 0) -> None:
+    def __init__(
+        self,
+        cfg: SourceConfig,
+        fetcher: Fetcher,
+        *,
+        archive_pages: int = 0,
+        rss_items: Sequence[RawSermon] = (),
+    ) -> None:
         self.cfg = cfg
         self.fetcher = fetcher
+        # The church's feed items, read-only. A scraper may use them to decide which pages to
+        # fetch; it never changes them (the merge in policy.py decides what scraped data may add).
+        self.rss_items = tuple(rss_items)
         # How many archive listing pages beyond the first to crawl (0 = none). Scrapers without
         # an archive ignore it.
         self.archive_pages = archive_pages
@@ -40,8 +51,9 @@ class Scraper:
 
 def get_scraper(name: str) -> type[Scraper]:
     from .allsouls import AllSoulsScraper
+    from .sthelens import StHelensScraper
 
-    registry: dict[str, type[Scraper]] = {AllSoulsScraper.name: AllSoulsScraper}
+    registry: dict[str, type[Scraper]] = {AllSoulsScraper.name: AllSoulsScraper, StHelensScraper.name: StHelensScraper}
     try:
         return registry[name]
     except KeyError:

@@ -1,0 +1,30 @@
+# St Helen's Bishopsgate, City of London.
+# Feeds + site examined 2026-11-17/19. robots.txt disallows /resources/all/* and /_util/login/*; no
+# Crawl-delay. Permission: not yet confirmed with the church (see CLAUDE.md rule 7).
+# Sunday talks only: the midweek feed (api.st-helens.org.uk/v1.0/feeds/midweek.xml) is left out.
+
+[church]
+id = "st-helens-bishopsgate"
+name = "St Helen's Bishopsgate"
+location = "London, UK"
+websiteUrl = "https://www.st-helens.org.uk"
+
+[rss]
+# PRIMARY source: the Sunday podcast feed (iTunes id 282642731), last 20 talks. It prints passage
+# and speaker but no series.
+url = "https://api.st-helens.org.uk/v1.0/feeds/sunday.xml"
+format = "sthelens"
+
+[scrape]
+# BACKFILL ONLY. The archive comes from a one-off crawl of /resources/talk/<id>/ pages
+# (`sermon-pipeline crawl-sthelens`), committed as `snapshot`. Each build also fetches the talk page
+# of any feed talk missing from the snapshot, which is where its series label is printed.
+scraper = "sthelens"
+snapshot = "data/st-helens-bishopsgate/talks.jsonl"
+# Talks dated on a Sunday only (the archive mixes in midweek lunchtime talks).
+sunday_only = true
+
+[series]
+min_book_share = 0.8
+exclude = []
+exclude_patterns = ["christmas", "carol", "advent", "easter"]

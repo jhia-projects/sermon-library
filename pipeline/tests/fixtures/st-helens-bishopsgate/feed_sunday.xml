@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+	<channel>
+		<title><![CDATA[St Helen's Sunday talks podcast]]></title>
+		<description><![CDATA[One thing matters; taking the time to listen to Jesus. Every week we gather together on Sundays to hear God speak through the Bible. This podcast is a feed of our three English speaking talks from our Sunday services. We are a church based in the heart of the City of London. Visit www.st-helens.org.uk or download our apps on iOS and Android, to access thousands of talks and other resources.]]></description>
+		<link>https://www.st-helens.org.uk</link>
+		<image>
+			<url>https://api.st-helens.org.uk/v1.0/downloads/thumbnail/Icon_Green_white_background.jpg</url>
+			<title>St Helen&apos;s Sunday talks podcast</title>
+			<link>https://www.st-helens.org.uk</link>
+		</image>
+		<generator>Podcast for Node</generator>
+		<lastBuildDate>Tue, 17 Nov 2026 16:25:03 GMT</lastBuildDate>
+		<atom:link href="https://api.st-helens.org.uk/feeds/sunday.xml" rel="self" type="application/rss+xml"/>
+		<author><![CDATA[St Helen's Bishopsgate]]></author>
+		<copyright><![CDATA[2026 St Helen's Bishopsgate]]></copyright>
+		<language><![CDATA[en]]></language>
+		<category><![CDATA[Religion & Spirituality]]></category>
+		<category><![CDATA[Christianity]]></category>
+		<itunes:author>St Helen&apos;s Bishopsgate</itunes:author>
+		<itunes:subtitle>Sunday sermons preached at St Helens Church, Bishopsgate, London, UK</itunes:subtitle>
+		<itunes:summary>One thing matters; taking the time to listen to Jesus. Every week we gather together on Sundays to hear God speak through the Bible. This podcast is a feed of our three English speaking talks from our Sunday services. We are a church based in the heart of the City of London. Visit www.st-helens.org.uk or download our apps on iOS and Android, to access thousands of talks and other resources.</itunes:summary>
+		<itunes:owner>
+			<itunes:name></itunes:name>
+			<itunes:email>digital@st-helens.org.uk</itunes:email>
+		</itunes:owner>
+		<itunes:explicit>No</itunes:explicit>
+		<itunes:category text="Religion &amp; Spirituality">
+			<itunes:category text="Christianity"/>
+		</itunes:category>
+		<itunes:image href="https://api.st-helens.org.uk/v1.0/downloads/thumbnail/Icon_Green_white_background.jpg"/>
+		<item>
+			<title><![CDATA[The divine king]]></title>
+			<description><![CDATA[George Diwakar - At Christmas we sing about 'the little Lord Jesus', but Psalm 110 shows us a far bigger Lord Jesus. In this psalm David hears the LORD speak to the one David calls 'my Lord', who is seated on God’s own throne, rules over God’s defeated enemies and gathers people who gladly serve him. We look at what this psalm shows us about King Jesus, and why it should make us want to offer ourselves freely to his service.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59582/SE26-047.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 15 Nov 2026 18:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59582/SE26-047.mp3" length="22267547" type="audio/mpeg"/>
+			<itunes:author>George Diwakar</itunes:author>
+			<itunes:subtitle>Psalm 110:1-3 - George Diwakar (6pm)</itunes:subtitle>
+			<itunes:summary>At Christmas we sing about &apos;the little Lord Jesus&apos;, but Psalm 110 shows us a far bigger Lord Jesus. In this psalm David hears the LORD speak to the one David calls &apos;my Lord&apos;, who is seated on God’s own throne, rules over God’s defeated enemies and gathers people who gladly serve him. We look at what this psalm shows us about King Jesus, and why it should make us want to offer ourselves freely to his service.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>30:47</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[God’s certain promise]]></title>
+			<description><![CDATA[Nick Heeley - The world hopes things will get better, but often it’s just wishful thinking. In Genesis 15, God the creator gives Abram certainty of a future family, who will dwell in a future home. As Christians, these promises are ours, as we share the faith of Abram. We trust the same promises, and can be certain of a future home with our Lord God.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59581/SA26-047.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 15 Nov 2026 16:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59581/SA26-047.mp3" length="21167386" type="audio/mpeg"/>
+			<itunes:author>Nick Heeley</itunes:author>
+			<itunes:subtitle>Genesis 15:1-21 - Nick Heeley (4pm)</itunes:subtitle>
+			<itunes:summary>The world hopes things will get better, but often it’s just wishful thinking. In Genesis 15, God the creator gives Abram certainty of a future family, who will dwell in a future home. As Christians, these promises are ours, as we share the faith of Abram. We trust the same promises, and can be certain of a future home with our Lord God.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>29:21</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The Son was before Abraham]]></title>
+			<description><![CDATA[William Taylor - The so-called Abrahamic religions account for 53–55% of the world’s population. How we react to Jesus's claims will determine whether we are, or are not, true to Abraham’s faith.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59579/SM26-047.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 15 Nov 2026 11:15:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59579/SM26-047.mp3" length="21645290" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>John 8:48-59 - William Taylor (11:15am)</itunes:subtitle>
+			<itunes:summary>The so-called Abrahamic religions account for 53–55% of the world’s population. How we react to Jesus&apos;s claims will determine whether we are, or are not, true to Abraham’s faith.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>30:02</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[ The Son was before Abraham]]></title>
+			<description><![CDATA[William Taylor - The so-called Abrahamic religions account for 53–55% of the world’s population. How we react to Jesus's claims will determine whether we are, or are not, true to Abraham’s faith.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59580/SP26-047.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 15 Nov 2026 09:30:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59580/SP26-047.mp3" length="21676539" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>John 8:48-59 - William Taylor (9am)</itunes:subtitle>
+			<itunes:summary>The so-called Abrahamic religions account for 53–55% of the world’s population. How we react to Jesus&apos;s claims will determine whether we are, or are not, true to Abraham’s faith.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>30:04</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Salvation from death and sin]]></title>
+			<description><![CDATA[Jack Stileman - One day you will die. Most of us avoid thinking about it because it’s terrifying. And most of us carry a penny-sized impression of Jesus: a spiritual teacher, a religious leader, someone to take or leave. Someone who can’t help us here. But in Luke 8:40-56, a desperate father and a bleeding woman discover how small that view is. Jesus is the unprecedented Saviour who rescues us from death and sin. So do not fear; only believe.
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59574/SE26-046.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 08 Nov 2026 18:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59574/SE26-046.mp3" length="23638569" type="audio/mpeg"/>
+			<itunes:author>Jack Stileman</itunes:author>
+			<itunes:subtitle>Luke 8:40-56 - Jack Stileman (6pm)</itunes:subtitle>
+			<itunes:summary>One day you will die. Most of us avoid thinking about it because it’s terrifying. And most of us carry a penny-sized impression of Jesus: a spiritual teacher, a religious leader, someone to take or leave. Someone who can’t help us here. But in Luke 8:40-56, a desperate father and a bleeding woman discover how small that view is. Jesus is the unprecedented Saviour who rescues us from death and sin. So do not fear; only believe.
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>32:42</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Salvation from despair and death]]></title>
+			<description><![CDATA[Aneirin Glyn - As those caught up in a world marked by death, can we trust Jesus to deliver? In this passage we see Jesus’ astonishing power and also his compassion for those in need. Jesus can give to us life with God forever, through his death and resurrection.
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59573/SA26-046.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 08 Nov 2026 16:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59573/SA26-046.mp3" length="21411063" type="audio/mpeg"/>
+			<itunes:author>Aneirin Glyn</itunes:author>
+			<itunes:subtitle>Luke 8:40-56 - Aneirin Glyn (4pm)</itunes:subtitle>
+			<itunes:summary>As those caught up in a world marked by death, can we trust Jesus to deliver? In this passage we see Jesus’ astonishing power and also his compassion for those in need. Jesus can give to us life with God forever, through his death and resurrection.
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>29:42</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The Son sets you free (with Q&A)]]></title>
+			<description><![CDATA[William Taylor - As people of the so-called ‘free world’ we like to think that we are enlightened and liberated. Jesus disagrees – and his logic is alarmingly relentless.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59571/SM26-046.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 08 Nov 2026 11:15:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59571/SM26-046.mp3" length="29315781" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>John 8:31-47 - William Taylor (11:15am)</itunes:subtitle>
+			<itunes:summary>As people of the so-called ‘free world’ we like to think that we are enlightened and liberated. Jesus disagrees – and his logic is alarmingly relentless.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>40:41</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The Son sets you free (with Q&A)]]></title>
+			<description><![CDATA[William Taylor - As people of the so-called ‘free world’ we like to think that we are enlightened and liberated. Jesus disagrees – and his logic is alarmingly relentless.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59572/SP26-046.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 08 Nov 2026 09:30:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59572/SP26-046.mp3" length="29315781" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>John 8:31-47 - William Taylor (9am)</itunes:subtitle>
+			<itunes:summary>As people of the so-called ‘free world’ we like to think that we are enlightened and liberated. Jesus disagrees – and his logic is alarmingly relentless.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>40:41</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Salvation from the devil]]></title>
+			<description><![CDATA[Jack Stileman - On the far side of the lake, Jesus meets a man whose life has been torn apart. He lives among the tombs, cut off from his town and controlled by a host of demons. Luke shows us plainly that the devil’s work is to destroy. Yet with a single word Jesus sets the man free, and we find him clothed, in his right mind and sitting at Jesus’ feet. Who do you want to be Lord of your life?]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59569/SE26-045.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 01 Nov 2026 18:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59569/SE26-045.mp3" length="32543049" type="audio/mpeg"/>
+			<itunes:author>Jack Stileman</itunes:author>
+			<itunes:subtitle>Luke 8:26-39 - Jack Stileman (6pm)</itunes:subtitle>
+			<itunes:summary>On the far side of the lake, Jesus meets a man whose life has been torn apart. He lives among the tombs, cut off from his town and controlled by a host of demons. Luke shows us plainly that the devil’s work is to destroy. Yet with a single word Jesus sets the man free, and we find him clothed, in his right mind and sitting at Jesus’ feet. Who do you want to be Lord of your life?</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>29:48</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Salvation from the devil (with Q&A)]]></title>
+			<description><![CDATA[Aneirin Glyn - Are there no-go areas for God’s kingdom? Here we see Jesus entering enemy territory, to crush those who oppose him and to rescue the oppressed. And yet, some push him away. Those who welcome the king speak of what he has done for them.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59568/SA26-045.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 01 Nov 2026 16:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59568/SA26-045.mp3" length="30943884" type="audio/mpeg"/>
+			<itunes:author>Aneirin Glyn</itunes:author>
+			<itunes:subtitle>Luke 8:26-39 - Aneirin Glyn (4pm)</itunes:subtitle>
+			<itunes:summary>Are there no-go areas for God’s kingdom? Here we see Jesus entering enemy territory, to crush those who oppose him and to rescue the oppressed. And yet, some push him away. Those who welcome the king speak of what he has done for them.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>42:56</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The Son is the light of the world]]></title>
+			<description><![CDATA[William Taylor - One of the most disturbing features of the teaching of Jesus is the way that it exposes us in our human limitations and failures.  Jesus’ claim to be the light of the world suggests that he, and he alone, can provide true enlightenment.  At the same time, it implies that any who refuse to recognise him remain – in the dark.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59565/SM26-045.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 01 Nov 2026 11:15:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59565/SM26-045.mp3" length="22906607" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>John 8:12-30 - William Taylor (11:15am)</itunes:subtitle>
+			<itunes:summary>One of the most disturbing features of the teaching of Jesus is the way that it exposes us in our human limitations and failures.  Jesus’ claim to be the light of the world suggests that he, and he alone, can provide true enlightenment.  At the same time, it implies that any who refuse to recognise him remain – in the dark.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>31:47</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The Son is the light of the world]]></title>
+			<description><![CDATA[William Taylor - One of the most disturbing features of the teaching of Jesus is the way that it exposes us in our human limitations and failures. Jesus’ claim to be the light of the world suggests that he, and he alone, can provide true enlightenment. At the same time, it implies that any who refuse to recognise him remain – in the dark.
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59566/SP26-045.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 01 Nov 2026 09:30:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59566/SP26-045.mp3" length="22906607" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>John 8:12-30 - William Taylor (9am)</itunes:subtitle>
+			<itunes:summary>One of the most disturbing features of the teaching of Jesus is the way that it exposes us in our human limitations and failures. Jesus’ claim to be the light of the world suggests that he, and he alone, can provide true enlightenment. At the same time, it implies that any who refuse to recognise him remain – in the dark.
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>31:47</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Salvation from disorder]]></title>
+			<description><![CDATA[George Diwakar - In a broken world filled with uncertainty, disaster and fear, where can we find lasting hope? In Luke 8:22–25, Jesus calms a raging storm, revealing his divine authority over creation and his power to save. See why, even when live feels stormy, we can face the future without fear when we trust in the one who promises to rescue us and bring us home to a perfect new creation.
+
+
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59563/SE26-044.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 25 Oct 2026 18:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59563/SE26-044.mp3" length="20613491" type="audio/mpeg"/>
+			<itunes:author>George Diwakar</itunes:author>
+			<itunes:subtitle>Luke 8:22-25 - George Diwakar (6pm)</itunes:subtitle>
+			<itunes:summary>In a broken world filled with uncertainty, disaster and fear, where can we find lasting hope? In Luke 8:22–25, Jesus calms a raging storm, revealing his divine authority over creation and his power to save. See why, even when live feels stormy, we can face the future without fear when we trust in the one who promises to rescue us and bring us home to a perfect new creation.
+
+
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>28:29</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Salvation from disorder]]></title>
+			<description><![CDATA[Aneirin Glyn - What does Jesus calming the raging storm with a word reveal to us? Here is the Creator himself at work controlling the elements. Even more, with Psalm 107 in mind, we see that this action reveals God is bringing to fulfilment his great plan to gather people to himself.
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59559/SA26-044.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 25 Oct 2026 16:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59559/SA26-044.mp3" length="22296923" type="audio/mpeg"/>
+			<itunes:author>Aneirin Glyn</itunes:author>
+			<itunes:subtitle>Luke 8:22-25 - Aneirin Glyn (4pm)</itunes:subtitle>
+			<itunes:summary>What does Jesus calming the raging storm with a word reveal to us? Here is the Creator himself at work controlling the elements. Even more, with Psalm 107 in mind, we see that this action reveals God is bringing to fulfilment his great plan to gather people to himself.
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>30:56</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Judge the Son rightly]]></title>
+			<description><![CDATA[Gwilym Davies - There are so many conflicting voices when it comes to Jesus Christ. It can be overwhelming – and quite discouraging. In John 7, we see that the world can’t think straight about Jesus. But we also see that Jesus has promised to do something about it: to pour out his Spirit like rivers of living water.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59561/SM26-044.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 25 Oct 2026 11:15:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59561/SM26-044.mp3" length="25673888" type="audio/mpeg"/>
+			<itunes:author>Gwilym Davies</itunes:author>
+			<itunes:subtitle>John 7:1-52 - Gwilym Davies (11:15am)</itunes:subtitle>
+			<itunes:summary>There are so many conflicting voices when it comes to Jesus Christ. It can be overwhelming – and quite discouraging. In John 7, we see that the world can’t think straight about Jesus. But we also see that Jesus has promised to do something about it: to pour out his Spirit like rivers of living water.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>35:38</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Judge the Son rightly]]></title>
+			<description><![CDATA[Tim Sheppard - When theological experts cast doubt on the teachings of Jesus, it is easy to feel naïve or even to question our beliefs. Have theological experts seen something we haven’t? But John 7 shows us that the crowd has always included so-called ‘expert’ doubters. And just like in Jesus’ day, their doubt does not arise from expertise but rather from poor judgement and ignorance of the Scriptures. Meanwhile, as others in the crowd show us, Jesus really is building his church.
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59562/SP26-044.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 25 Oct 2026 09:30:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59562/SP26-044.mp3" length="21569587" type="audio/mpeg"/>
+			<itunes:author>Tim Sheppard</itunes:author>
+			<itunes:subtitle>John 7:1-52 - Tim Sheppard (9am)</itunes:subtitle>
+			<itunes:summary>When theological experts cast doubt on the teachings of Jesus, it is easy to feel naïve or even to question our beliefs. Have theological experts seen something we haven’t? But John 7 shows us that the crowd has always included so-called ‘expert’ doubters. And just like in Jesus’ day, their doubt does not arise from expertise but rather from poor judgement and ignorance of the Scriptures. Meanwhile, as others in the crowd show us, Jesus really is building his church.
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>29:54</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Receiving salvation (2)]]></title>
+			<description><![CDATA[Jack Stileman - How do we receive Jesus’ salvation? In Luke 8:16–21, Jesus warns us that our response to his word reveals what is really going on in our hearts. But he also offers an extraordinary promise: those who hear God’s word and do it belong to his family. 
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59554/SE26-043.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 18 Oct 2026 18:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59554/SE26-043.mp3" length="18403381" type="audio/mpeg"/>
+			<itunes:author>Jack Stileman</itunes:author>
+			<itunes:subtitle>Luke 8:16-21 - Jack Stileman (6pm)</itunes:subtitle>
+			<itunes:summary>How do we receive Jesus’ salvation? In Luke 8:16–21, Jesus warns us that our response to his word reveals what is really going on in our hearts. But he also offers an extraordinary promise: those who hear God’s word and do it belong to his family. 
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>25:25</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Receiving salvation]]></title>
+			<description><![CDATA[Aneirin Glyn - How can we be those who bear fruit? The kingdom brings light to the world, and so we must shine. As we hear and obey God's word, we show ourselves to be members of his family, people who truly know God as our loving heavenly Father.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59553/SA26-043.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 18 Oct 2026 16:00:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59553/SA26-043.mp3" length="19929467" type="audio/mpeg"/>
+			<itunes:author>Aneirin Glyn</itunes:author>
+			<itunes:subtitle>Luke 8:16-21 - Aneirin Glyn (4pm)</itunes:subtitle>
+			<itunes:summary>How can we be those who bear fruit? The kingdom brings light to the world, and so we must shine. As we hear and obey God&apos;s word, we show ourselves to be members of his family, people who truly know God as our loving heavenly Father.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>27:39</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The Son speaks the words of eternal life]]></title>
+			<description><![CDATA[Gwilym Davies - Sometimes it feels as though everyone is walking away from Jesus. This can be true on a personal level, as old friends quietly drift away from the Christian faith. It can also seem true on a national level, as church congregations gradually decline. But in today's passage, John wants us to see that, however discouraging this may be, it is no reason to stop listening to Jesus. It does not take him by surprise. And Jesus still has the words of eternal life.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59557/SM26-043.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 18 Oct 2026 11:15:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59557/SM26-043.mp3" length="18570158" type="audio/mpeg"/>
+			<itunes:author>Gwilym Davies</itunes:author>
+			<itunes:subtitle>John 6:60-71 - Gwilym Davies (11:15am)</itunes:subtitle>
+			<itunes:summary>Sometimes it feels as though everyone is walking away from Jesus. This can be true on a personal level, as old friends quietly drift away from the Christian faith. It can also seem true on a national level, as church congregations gradually decline. But in today&apos;s passage, John wants us to see that, however discouraging this may be, it is no reason to stop listening to Jesus. It does not take him by surprise. And Jesus still has the words of eternal life.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>25:46</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The Son speaks the words of eternal life]]></title>
+			<description><![CDATA[Tim Sheppard - To many, a sermon commending the Bible feels familiar and predictable. However, John 6 concludes with something far more profound, challenging our attitude towards Jesus' words. Peter's famous response to Jesus stands in sharp contrast to that of the other disciples in this passage and provides a crucial model for us to follow.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59556/SP26-043.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Sun, 18 Oct 2026 09:30:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59556/SP26-043.mp3" length="19761914" type="audio/mpeg"/>
+			<itunes:author>Tim Sheppard</itunes:author>
+			<itunes:subtitle>John 6:60-71 - Tim Sheppard (9am)</itunes:subtitle>
+			<itunes:summary>To many, a sermon commending the Bible feels familiar and predictable. However, John 6 concludes with something far more profound, challenging our attitude towards Jesus&apos; words. Peter&apos;s famous response to Jesus stands in sharp contrast to that of the other disciples in this passage and provides a crucial model for us to follow.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>27:23</itunes:duration>
+		</item>
+	</channel>
+</rss>

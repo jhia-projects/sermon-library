@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+	<channel>
+		<title><![CDATA[St Helen's midweek talks podcast]]></title>
+		<description><![CDATA[One thing matters; taking the time to listen to Jesus. Every week people from across the City of London meet to hear God speak through the Bible. This podcast is a feed of our midweek talks, most will include a Q&A on the Bible passage. We are a church based in the heart of the City of London. Visit www.st-helens.org.uk or download our apps on iOS and Android, to access thousands of talks and other resources. Also visit www.gospelatwork.org.uk to find details of lunchtime talks taking place across London every week.]]></description>
+		<link>https://www.st-helens.org.uk</link>
+		<image>
+			<url>https://api.st-helens.org.uk/v1.0/downloads/thumbnail/Icon_Orange_White_Background.jpg</url>
+			<title>St Helen&apos;s midweek talks podcast</title>
+			<link>https://www.st-helens.org.uk</link>
+		</image>
+		<generator>Podcast for Node</generator>
+		<lastBuildDate>Tue, 17 Nov 2026 16:25:05 GMT</lastBuildDate>
+		<atom:link href="https://api.st-helens.org.uk/feeds/midweek.xml" rel="self" type="application/rss+xml"/>
+		<author><![CDATA[St Helen's Bishopsgate]]></author>
+		<copyright><![CDATA[2026 St Helen's Bishopsgate]]></copyright>
+		<language><![CDATA[en]]></language>
+		<category><![CDATA[Religion & Spirituality]]></category>
+		<category><![CDATA[Christianity]]></category>
+		<itunes:author>St Helen&apos;s Bishopsgate</itunes:author>
+		<itunes:subtitle>Midweek sermons preached at St Helen&apos;s Church, Bishopsgate, London, UK</itunes:subtitle>
+		<itunes:summary>One thing matters; taking the time to listen to Jesus. Every week people from across the City of London meet to hear God speak through the Bible. This podcast is a feed of our midweek talks, most will include a Q&amp;A on the Bible passage. We are a church based in the heart of the City of London. Visit www.st-helens.org.uk or download our apps on iOS and Android, to access thousands of talks and other resources. Also visit www.gospelatwork.org.uk to find details of lunchtime talks taking place across London every week.</itunes:summary>
+		<itunes:owner>
+			<itunes:name></itunes:name>
+			<itunes:email>digital@st-helens.org.uk</itunes:email>
+		</itunes:owner>
+		<itunes:explicit>No</itunes:explicit>
+		<itunes:category text="Religion &amp; Spirituality">
+			<itunes:category text="Christianity"/>
+		</itunes:category>
+		<itunes:image href="https://api.st-helens.org.uk/v1.0/downloads/thumbnail/Icon_Orange_White_Background.jpg"/>
+		<item>
+			<title><![CDATA[Fearless]]></title>
+			<description><![CDATA[Paul Williams - It's easy to feel unable to speak openly about Jesus and the Bible, particularly in the office. In Acts 4:23–37 we will discover what transformed Jesus' timid disciples to speak fearlessly about Jesus, even in the face of significant threats.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59570/MW26-045.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 03 Nov 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59570/MW26-045.mp3" length="19788132" type="audio/mpeg"/>
+			<itunes:author>Paul Williams</itunes:author>
+			<itunes:subtitle>Acts 4:23-37 - Paul Williams</itunes:subtitle>
+			<itunes:summary>It&apos;s easy to feel unable to speak openly about Jesus and the Bible, particularly in the office. In Acts 4:23–37 we will discover what transformed Jesus&apos; timid disciples to speak fearlessly about Jesus, even in the face of significant threats.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>26:41</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The salvation he won]]></title>
+			<description><![CDATA[Paul Williams - Many Christians in the City know all too well what happens when they speak boldly in the workplace about the uniqueness of Jesus. In Acts 4v1-22 we look at Peter and John, standing before the highest court in the land, and uncompromisingly declaring Jesus to be the only way. And see why all Christians everywhere need to do the same. ‘There is no other name under heaven given among men by which we must be saved.’ Acts 4v12]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59564/MW26-044.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 27 Oct 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59564/MW26-044.mp3" length="25618961" type="audio/mpeg"/>
+			<itunes:author>Paul Williams</itunes:author>
+			<itunes:subtitle>Acts 4:1-22 - Paul Williams</itunes:subtitle>
+			<itunes:summary>Many Christians in the City know all too well what happens when they speak boldly in the workplace about the uniqueness of Jesus. In Acts 4v1-22 we look at Peter and John, standing before the highest court in the land, and uncompromisingly declaring Jesus to be the only way. And see why all Christians everywhere need to do the same. ‘There is no other name under heaven given among men by which we must be saved.’ Acts 4v12</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>24:07</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The blessing he gives]]></title>
+			<description><![CDATA[Paul Williams - Our world is broken, and looking at all the fundraising and research people do, we clearly know it is. But even our best efforts can't fix this broken world; only Jesus can. And he will make it better than it ever was. Hear how, in Jesus, the best is yet to come: not just a better world, but a world beyond our wildest dreams.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59558/MW26-043.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 20 Oct 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59558/MW26-043.mp3" length="17482865" type="audio/mpeg"/>
+			<itunes:author>Paul Williams</itunes:author>
+			<itunes:subtitle>Acts 3:17-26 - Paul Williams</itunes:subtitle>
+			<itunes:summary>Our world is broken, and looking at all the fundraising and research people do, we clearly know it is. But even our best efforts can&apos;t fix this broken world; only Jesus can. And he will make it better than it ever was. Hear how, in Jesus, the best is yet to come: not just a better world, but a world beyond our wildest dreams.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>24:15</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The life he offers]]></title>
+			<description><![CDATA[William Taylor - The news is dominated by death – and, tragically, for many of us, it is much closer to home. In Acts 3:1–16, we see that Jesus establishes a new world where death, suffering and pain will be abolished forever.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59552/MW26-042.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 13 Oct 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59552/MW26-042.mp3" length="20213191" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>Acts 3:1-16 - William Taylor</itunes:subtitle>
+			<itunes:summary>The news is dominated by death – and, tragically, for many of us, it is much closer to home. In Acts 3:1–16, we see that Jesus establishes a new world where death, suffering and pain will be abolished forever.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>28:03</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The evidence of a changed world]]></title>
+			<description><![CDATA[William Taylor - What are the marks of an authentic Christian believer? The latest census has over 46% of the UK identifying as Christian. Here in the City we have witnessed significant numbers of men and women expressing renewed interest in the Christian faith. This makes Acts 2:37–47 acutely relevant. ]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59545/MW26-041.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 06 Oct 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59545/MW26-041.mp3" length="20173415" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>Acts 2:37-47 - William Taylor</itunes:subtitle>
+			<itunes:summary>What are the marks of an authentic Christian believer? The latest census has over 46% of the UK identifying as Christian. Here in the City we have witnessed significant numbers of men and women expressing renewed interest in the Christian faith. This makes Acts 2:37–47 acutely relevant. </itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>27:59</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The events that changed this world]]></title>
+			<description><![CDATA[Paul Williams - Is there enough evidence to know that Jesus really is Lord and Christ? Yes. In Acts 2:22-36, the apostle Peter lays out that evidence: Jesus’ life, death, resurrection and ascension. Hear the case for Christ, and discover why the verdict matters more than any other decision you will ever make.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59539/MW26-040.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 29 Sep 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59539/MW26-040.mp3" length="21129026" type="audio/mpeg"/>
+			<itunes:author>Paul Williams</itunes:author>
+			<itunes:subtitle>Acts 2:22-36 - Paul Williams</itunes:subtitle>
+			<itunes:summary>Is there enough evidence to know that Jesus really is Lord and Christ? Yes. In Acts 2:22-36, the apostle Peter lays out that evidence: Jesus’ life, death, resurrection and ascension. Hear the case for Christ, and discover why the verdict matters more than any other decision you will ever make.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>29:19</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The agent of change in a changed world]]></title>
+			<description><![CDATA[William Taylor - With over 650 million members, Pentecostal and Charismatic Christianity comprises the fastest-growing religious movement in the world. One in sixteen people worldwide is part of this movement. The events of the Day of Pentecost, recorded in Acts 2:1-21, continue to impact the world today. But what happened? What did it mean? And what, exactly, is Pentecostal Christianity?]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59533/MW26-039.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 22 Sep 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59533/MW26-039.mp3" length="20444242" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>Acts 2:1-21 - William Taylor</itunes:subtitle>
+			<itunes:summary>With over 650 million members, Pentecostal and Charismatic Christianity comprises the fastest-growing religious movement in the world. One in sixteen people worldwide is part of this movement. The events of the Day of Pentecost, recorded in Acts 2:1-21, continue to impact the world today. But what happened? What did it mean? And what, exactly, is Pentecostal Christianity?</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>28:22</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The foundations of this changed world]]></title>
+			<description><![CDATA[William Taylor - Foundations matter – as those who work on the 40th floor of the Gherkin will tell you! And the bigger the project, the more important the ground on which it is built. The New Testament repeatedly emphasises the trustworthiness of those on whom Jesus' kingdom is built. We will see in Acts 1:12–26 that their credentials are impeccable.
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59526/MW26-038.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 15 Sep 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59526/MW26-038.mp3" length="19915235" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>Acts 1:12-26 - William Taylor</itunes:subtitle>
+			<itunes:summary>Foundations matter – as those who work on the 40th floor of the Gherkin will tell you! And the bigger the project, the more important the ground on which it is built. The New Testament repeatedly emphasises the trustworthiness of those on whom Jesus&apos; kingdom is built. We will see in Acts 1:12–26 that their credentials are impeccable.
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>27:38</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[The moment the world changed forever]]></title>
+			<description><![CDATA[William Taylor - There are multiple contenders for ‘the moment the world changed’. The invention of penicillin? The World Wide Web? 9/11? AI? But the opening verses of Acts point us to events of a completely different order that have radically transformed human existence forever. Hear how you can benefit from God’s agenda in this changed world.
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59506/MW26-037.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 08 Sep 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59506/MW26-037.mp3" length="17198262" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>Acts 1:1-11 - William Taylor</itunes:subtitle>
+			<itunes:summary>There are multiple contenders for ‘the moment the world changed’. The invention of penicillin? The World Wide Web? 9/11? AI? But the opening verses of Acts point us to events of a completely different order that have radically transformed human existence forever. Hear how you can benefit from God’s agenda in this changed world.
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>23:52</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[How can you have faith that trusts and follows Jesus?]]></title>
+			<description><![CDATA[Simon Rafferty - The Christian life is hard. For many of us, the finish line is likely to be decades away. So what will keep us going? What – or rather, who – should we ultimately look to?]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59499/MW26-036.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 01 Sep 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59499/MW26-036.mp3" length="17230835" type="audio/mpeg"/>
+			<itunes:author>Simon Rafferty</itunes:author>
+			<itunes:subtitle>Hebrews 11:39-12:3 - Simon Rafferty</itunes:subtitle>
+			<itunes:summary>The Christian life is hard. For many of us, the finish line is likely to be decades away. So what will keep us going? What – or rather, who – should we ultimately look to?</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>23:54</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[How can you have faith through good times and bad times?]]></title>
+			<description><![CDATA[Titus Waldock - Why does faith seem to “work” for some people, while others who trust God still suffer?
+Hebrews 11 shows us real faith can look like triumph or hardship, because its hope is fixed on something better than either.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59492/MW26-035.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 25 Aug 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59492/MW26-035.mp3" length="17289978" type="audio/mpeg"/>
+			<itunes:author>Titus Waldock</itunes:author>
+			<itunes:subtitle>Hebrews 11:32-38 - Titus Waldock</itunes:subtitle>
+			<itunes:summary>Why does faith seem to “work” for some people, while others who trust God still suffer?
+Hebrews 11 shows us real faith can look like triumph or hardship, because its hope is fixed on something better than either.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>23:59</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[How can you have faith when it means difficult choices?]]></title>
+			<description><![CDATA[Nim Anderson - Moses grew up with the best Egypt had to offer, and walked away from all of it. Nim looks at Hebrews 11:23-31 and asks what's really stopping us doing the same: fear, treasure, or just not making a habit of it.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59485/MW26-034.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 18 Aug 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59485/MW26-034.mp3" length="16005697" type="audio/mpeg"/>
+			<itunes:author>Nim Anderson</itunes:author>
+			<itunes:subtitle>Hebrews 11:23-31 - Nim Anderson</itunes:subtitle>
+			<itunes:summary>Moses grew up with the best Egypt had to offer, and walked away from all of it. Nim looks at Hebrews 11:23-31 and asks what&apos;s really stopping us doing the same: fear, treasure, or just not making a habit of it.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>22:12</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[How can you have faith when it means missing out now?]]></title>
+			<description><![CDATA[Archie Mowatt - FOMO shapes so many of our decisions. But what if the bigger danger is missing out on God's future promises? In Hebrews 11:17–22, we'll see how faith helps us hold good things loosely, trust God when obedience is costly, and live with confidence that death is not the end.
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59478/MW26-033.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 11 Aug 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59478/MW26-033.mp3" length="13328054" type="audio/mpeg"/>
+			<itunes:author>Archie Mowatt</itunes:author>
+			<itunes:subtitle>Hebrews 11:17-22 - Archie Mowatt</itunes:subtitle>
+			<itunes:summary>FOMO shapes so many of our decisions. But what if the bigger danger is missing out on God&apos;s future promises? In Hebrews 11:17–22, we&apos;ll see how faith helps us hold good things loosely, trust God when obedience is costly, and live with confidence that death is not the end.
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>18:28</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[How can you have faith in a heavenly city beyond this world?]]></title>
+			<description><![CDATA[Ian Bright - What if the career, home and security we're building today aren't our ultimate destination? Explore how Hebrews 11:8–16 shapes our present decisions around a future we cannot yet see, and why the promise of a 'better country' changes how we live in the here and now.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59471/MW26-032.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 04 Aug 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59471/MW26-032.mp3" length="14431421" type="audio/mpeg"/>
+			<itunes:author>Ian Bright</itunes:author>
+			<itunes:subtitle>Hebrews 11:8-16 - Ian Bright</itunes:subtitle>
+			<itunes:summary>What if the career, home and security we&apos;re building today aren&apos;t our ultimate destination? Explore how Hebrews 11:8–16 shapes our present decisions around a future we cannot yet see, and why the promise of a &apos;better country&apos; changes how we live in the here and now.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>20:00</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[How can you have faith that God accepts you?]]></title>
+			<description><![CDATA[Gabor Szarka - Most of us are interested in the legacy we leave behind. In this talk Gábor will explore from Hebrews 11:4–7 how a life lived by faith leads to a far greater legacy than any professional or personal accomplishment.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59462/MW26-031.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 28 Jul 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59462/MW26-031.mp3" length="16027602" type="audio/mpeg"/>
+			<itunes:author>Gabor Szarka</itunes:author>
+			<itunes:subtitle>Hebrews 11:4-7 - Gabor Szarka</itunes:subtitle>
+			<itunes:summary>Most of us are interested in the legacy we leave behind. In this talk Gábor will explore from Hebrews 11:4–7 how a life lived by faith leads to a far greater legacy than any professional or personal accomplishment.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>22:14</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[How can you have faith in something you can't see?]]></title>
+			<description><![CDATA[Will Trump - 'I wish I had your faith.' If you've ever heard that (or thought it), listen to what the author of Hebrews says. Find out what faith actually is, and why the evidence for it is sturdier than the feeling. 
+]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59457/MW26-030.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 21 Jul 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59457/MW26-030.mp3" length="16598330" type="audio/mpeg"/>
+			<itunes:author>Will Trump</itunes:author>
+			<itunes:subtitle>Hebrews 11:1-3 - Will Trump</itunes:subtitle>
+			<itunes:summary>&apos;I wish I had your faith.&apos; If you&apos;ve ever heard that (or thought it), listen to what the author of Hebrews says. Find out what faith actually is, and why the evidence for it is sturdier than the feeling. 
+</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>23:01</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Empty religion]]></title>
+			<description><![CDATA[William Taylor - With tears in his eyes, Jesus speaks some of his strongest words of judgement declaring the end of religion and calling all to his beautiful kingdom.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59450/MW26-029.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 14 Jul 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59450/MW26-029.mp3" length="19136542" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>Matthew 23:34-39 - William Taylor</itunes:subtitle>
+			<itunes:summary>With tears in his eyes, Jesus speaks some of his strongest words of judgement declaring the end of religion and calling all to his beautiful kingdom.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>26:32</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Deathly religion]]></title>
+			<description><![CDATA[William Taylor - 'Religion does more harm than good.' Find out from Matthew 23:25-33 why Jesus Christ agrees!]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59441/MW26-028.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 07 Jul 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59441/MW26-028.mp3" length="22712622" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>Matthew 23:25-33 - William Taylor</itunes:subtitle>
+			<itunes:summary>&apos;Religion does more harm than good.&apos; Find out from Matthew 23:25-33 why Jesus Christ agrees!</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>27:00</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Blind religion]]></title>
+			<description><![CDATA[William Taylor - Jesus warned his disciples about hell. Hell exists. Hell is real. Hell will be populated. Hell is forever. Hellish religion leads people to hell. It can look impressive - it is dangerously deceptive. And hellish religion is the default option of the City.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59435/MW26-027.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 30 Jun 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59435/MW26-027.mp3" length="20946844" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>Matthew 23:13-22 - William Taylor</itunes:subtitle>
+			<itunes:summary>Jesus warned his disciples about hell. Hell exists. Hell is real. Hell will be populated. Hell is forever. Hellish religion leads people to hell. It can look impressive - it is dangerously deceptive. And hellish religion is the default option of the City.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>29:03</itunes:duration>
+		</item>
+		<item>
+			<title><![CDATA[Hellish religion or heavenly relationship]]></title>
+			<description><![CDATA[William Taylor - In Matthew 23:1-12 Jesus denounces human religion and provides a vital warning to us. The contrast between what Jesus offers, and the religion of his day could not be more stark. One is steeped in humility and is heavenly – the other oozes hypocrisy and is hell-bound.]]></description>
+			<guid isPermaLink="false">https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59428/MW26-026.mp3</guid>
+			<dc:creator><![CDATA[St Helen's Bishopsgate]]></dc:creator>
+			<pubDate>Tue, 23 Jun 2026 13:10:00 GMT</pubDate>
+			<enclosure url="https://api.st-helens.org.uk/v1.0/downloads/podcast-download/59428/MW26-026.mp3" length="20570105" type="audio/mpeg"/>
+			<itunes:author>William Taylor</itunes:author>
+			<itunes:subtitle>Matthew 23:1-12 - William Taylor</itunes:subtitle>
+			<itunes:summary>In Matthew 23:1-12 Jesus denounces human religion and provides a vital warning to us. The contrast between what Jesus offers, and the religion of his day could not be more stark. One is steeped in humility and is heavenly – the other oozes hypocrisy and is hell-bound.</itunes:summary>
+			<itunes:explicit>No</itunes:explicit>
+			<itunes:duration>28:31</itunes:duration>
+		</item>
+	</channel>
+</rss>

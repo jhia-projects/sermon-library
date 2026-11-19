@@ -1,4 +1,4 @@
-"""sermon-pipeline {check-sources,build,validate,review-names}."""
+"""sermon-pipeline {check-sources,build,validate,review-names,crawl-sthelens}."""
 
 from __future__ import annotations
 
@@ -38,6 +38,15 @@ def main(argv: list[str] | None = None) -> int:
     r = sub.add_parser("review-names", help="flag near-duplicate speaker/series names for human review")
     r.add_argument("path", type=Path)
 
+    c = sub.add_parser(
+        "crawl-sthelens",
+        help="St Helen's Bishopsgate: fetch sitemaps + talk pages (cached, resumable, 2-3s/request)",
+    )
+    c.add_argument("--out", type=Path, default=Path("out/st-helens-bishopsgate"))
+    c.add_argument("--limit", type=int, default=5, help="new (uncached) talk pages to fetch (default 5)")
+    c.add_argument("--newest", action="store_true", help="walk the sitemap newest id first (default oldest)")
+    c.add_argument("--id", dest="ids", action="append", metavar="TALK_ID", help="fetch these talk ids instead")
+
     args = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
@@ -66,6 +75,13 @@ def main(argv: list[str] | None = None) -> int:
                       f"if they are the same, or list them in {REVIEW_PATH.name} if not")
                 return 1
             print("no unreviewed near-duplicate names")
+            return 0
+
+        if args.cmd == "crawl-sthelens":
+            from .scrapers.sthelens import crawl
+
+            summary = crawl(args.out, limit=args.limit, ids=args.ids, newest_first=args.newest)
+            print(json.dumps(summary, ensure_ascii=False, indent=1))
             return 0
 
         # build

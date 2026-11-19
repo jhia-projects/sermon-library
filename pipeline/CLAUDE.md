@@ -12,13 +12,14 @@ uv run sermon-pipeline build --no-scrape --out out/library.json # live: RSS only
 uv run sermon-pipeline build --archive-pages 5 --out out/library.json # + 5 archive pages (~10s each)
 uv run sermon-pipeline validate out/library.json
 uv run sermon-pipeline review-names out/library.json            # near-duplicate names
-uv run sermon-pipeline crawl-sthelens --limit 5                 # St Helen's: sitemaps + 5 talk pages (cached)
+uv run sermon-pipeline crawl-sthelens --limit 5                 # St Helen's: sitemaps + 5 new talk pages (cached), rewrites the snapshot
+uv run sermon-pipeline crawl-sthelens --newest --limit 300      # walk from the latest talk id instead
 uv run sermon-pipeline crawl-sthelens --id 59581 --id 59476     # specific talk ids
 ```
 macOS note: if `ModuleNotFoundError: sermon_pipeline` appears, the venv's editable `.pth` was given the hidden flag (Python 3.14 skips hidden .pth files): `chflags nohidden .venv/lib/python*/site-packages/*.pth`.
 
 ## RSS first — enforced, not advisory (`src/sermon_pipeline/policy.py`)
-1. **Config**: every `sources/*.toml` needs `[rss].url`, or `[rss].unavailable_reason` saying what was checked. A scraper alone is rejected.
+1. **Config**: every `sources/*.toml` needs `[rss].url` (or `[rss].urls` for several feeds, each required), or `[rss].unavailable_reason` saying what was checked. A scraper alone is rejected.
 2. **No silent fallback**: if the feed errors or is empty the church's build fails. Never catch that and scrape instead.
 3. **Feed discovery**: every page a scraper fetches goes through `Scraper.fetch_page`, which fails a scrape-only church if the page advertises a feed.
 4. **Merge** (`merge_prefer_rss`): matched on `source_key` (the church's own media id). Scraping may only *backfill* sermons absent from the feed, or *enrich* fields the feed left empty. Conflicting scraped values are discarded and counted (`ignored_scrape_conflicts` in the log).
@@ -31,7 +32,7 @@ macOS note: if `ModuleNotFoundError: sermon_pipeline` appears, the venv's editab
 sources/<church-id>.toml      church config: feed, scraper, series rules, aliases
 src/sermon_pipeline/
   models.py      RawSermon: source-agnostic record + per-field provenance
-  rss.py         generic podcast RSS reader (origin="rss")
+  rss.py         podcast RSS reader (origin="rss"); per-church item parser via `[rss].format` (FEED_FORMATS)
   scrapers/      backfill scrapers (origin="scrape"); register in scrapers/__init__.py
   policy.py      the rules above
   scripture.py   "1 Thessalonians 4:15 – 5:11" -> OSIS book + passage
@@ -70,9 +71,12 @@ Use `/add-church`. In short: find the feed first (site `<link rel=alternate>`, p
 - robots.txt: `Crawl-delay: 10`. `/Media/` and `/Groups/` are allowed.
 - Known data quirks: `.mp3` in titles, `No Favorites`/`No Favourites`, `Ollie Lansdown` → aliased to `Ollie Lansdowne` (confirmed).
 
-## St Helen's Bishopsgate notes (evaluation; not a build source yet)
-- Not in `sources/` and not registered in `scrapers/__init__.py`: permission from the church is pending. Parser + crawler: `scrapers/sthelens.py`; UA `sermonorganiser/0.1`; 2–3s per request; cache in `out/st-helens-bishopsgate/cache/`.
-- Feeds `https://api.st-helens.org.uk/v1.0/feeds/{sunday,midweek}.xml` (iTunes 282642731 / 285695591): last 20 items each, passage only in `itunes:subtitle` (`Psalm 110:1-3 - George Diwakar (6pm)`), **no series**. The generic `rss.py` mis-reads them (URL as source_key, description as series_name, no passage); needs a St Helen's reader before use.
+## St Helen's Bishopsgate notes (build source; permission pending)
+- `sources/st-helens-bishopsgate.toml`: **Sunday feed only** (`format = "sthelens"`) + scraper `sthelens` with `sunday_only = true`. Permission from the church is pending.
+- Data = feed (latest 20) + a one-off crawl. `crawl-sthelens` caches talk pages in `out/st-helens-bishopsgate/cache/` (2–3s per request, resumable, `--limit` counts new pages, `--newest` walks from the latest id) and rewrites the committed snapshot `data/st-helens-bishopsgate/talks.jsonl` from every cached page. Each build reads the snapshot and fetches only the talk pages of feed talks missing from it, which is where their series label is printed. The merge keeps feed values; pages add series, page URL, series URL. Pipeline-wide UA is `sermonorganiser/0.1`.
+- Build history (2026-11-19, Sunday feed + 7-talk snapshot): 4 series / 20 sermons published; before, RSS only: 0 series (all dropped `no series`).
+- **Open: repeated services.** The same series runs at several services (John at 9.30am + 11.15am, Luke at 4pm + 6pm, sometimes different speakers), so a series lists each Sunday twice. Needs a rule (split by service, or keep one) before publishing.
+- Feeds `https://api.st-helens.org.uk/v1.0/feeds/{sunday,midweek}.xml` (iTunes 282642731 / 285695591): last 20 items each, passage only in `itunes:subtitle` (`Psalm 110:1-3 - George Diwakar (6pm)`), **no series**. Read with `format = "sthelens"` (`rss._sthelens_item`); the generic reader mis-reads them (URL as source_key, description as series_name, no passage).
 - The number in a feed enclosure (`podcast-download/59581/SA26-047.mp3`) is the talk page id (`/resources/talk/59581/`): use it as `source_key` for both.
 - `/sitemap/talks` (11,207 talks, from 1971, ordered by id) and `/sitemap/series` (1,930). Talk pages print date+service time, passage (`<h2>`, empty on old talks), title (`<h3>`), speaker, `Series:` link, audio. No JSON-LD.
 - robots.txt disallows `/resources/all/*` (speaker links on every talk page point there) and `/_util/login/*`; `NEVER_FETCH_PREFIXES` blocks them even if robots parsing fails. No Crawl-delay.
