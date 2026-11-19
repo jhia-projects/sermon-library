@@ -12,6 +12,8 @@ uv run sermon-pipeline build --no-scrape --out out/library.json # live: RSS only
 uv run sermon-pipeline build --archive-pages 5 --out out/library.json # + 5 archive pages (~10s each)
 uv run sermon-pipeline validate out/library.json
 uv run sermon-pipeline review-names out/library.json            # near-duplicate names
+uv run sermon-pipeline crawl-sthelens --limit 5                 # St Helen's: sitemaps + 5 talk pages (cached)
+uv run sermon-pipeline crawl-sthelens --id 59581 --id 59476     # specific talk ids
 ```
 macOS note: if `ModuleNotFoundError: sermon_pipeline` appears, the venv's editable `.pth` was given the hidden flag (Python 3.14 skips hidden .pth files): `chflags nohidden .venv/lib/python*/site-packages/*.pth`.
 
@@ -36,7 +38,8 @@ src/sermon_pipeline/
   normalize.py   title/series-label/duration helpers
   build.py       collect -> group into book series -> library dict
   validate.py    schema + referential integrity (gate before writing)
-  http.py        PoliteFetcher: robots.txt, Crawl-delay (min 2s), https only
+  http.py        PoliteFetcher: robots.txt, Crawl-delay (min 2s, optional jitter), https only
+  crawl.py       CachedCrawler: disk cache so no URL is fetched twice; re-run to resume
 tests/fixtures/<church-id>/   saved feed + pages; tests never hit the network
 ```
 
@@ -66,3 +69,12 @@ Use `/add-church`. In short: find the feed first (site `<link rel=alternate>`, p
 - Archive rows differ from recent ones: `Reference:` (singular); file title `MP3 Audio` with format `64Kbps 13.4MB`; duration only as `Length: 29 minutes` (not parsed); group links carry a catalogue code (`ZA008 Genesis`); quoted titles (`'Did God say?'`).
 - robots.txt: `Crawl-delay: 10`. `/Media/` and `/Groups/` are allowed.
 - Known data quirks: `.mp3` in titles, `No Favorites`/`No Favourites`, `Ollie Lansdown` → aliased to `Ollie Lansdowne` (confirmed).
+
+## St Helen's Bishopsgate notes (evaluation; not a build source yet)
+- Not in `sources/` and not registered in `scrapers/__init__.py`: permission from the church is pending. Parser + crawler: `scrapers/sthelens.py`; UA `sermonorganiser/0.1`; 2–3s per request; cache in `out/st-helens-bishopsgate/cache/`.
+- Feeds `https://api.st-helens.org.uk/v1.0/feeds/{sunday,midweek}.xml` (iTunes 282642731 / 285695591): last 20 items each, passage only in `itunes:subtitle` (`Psalm 110:1-3 - George Diwakar (6pm)`), **no series**. The generic `rss.py` mis-reads them (URL as source_key, description as series_name, no passage); needs a St Helen's reader before use.
+- The number in a feed enclosure (`podcast-download/59581/SA26-047.mp3`) is the talk page id (`/resources/talk/59581/`): use it as `source_key` for both.
+- `/sitemap/talks` (11,207 talks, from 1971, ordered by id) and `/sitemap/series` (1,930). Talk pages print date+service time, passage (`<h2>`, empty on old talks), title (`<h3>`), speaker, `Series:` link, audio. No JSON-LD.
+- robots.txt disallows `/resources/all/*` (speaker links on every talk page point there) and `/_util/login/*`; `NEVER_FETCH_PREFIXES` blocks them even if robots parsing fails. No Crawl-delay.
+- Audio: store the `api.st-helens.org.uk/.../instant-download/<id>/<file>.mp3` URL. It 302s to a signed, expiring S3 URL that must never be stored.
+- The Sunday feed mixes 4 services at once (e.g. John at 9am/11:15am, Luke at 4pm/6pm), and series names are often thematic ("Saving the world" = Genesis).
