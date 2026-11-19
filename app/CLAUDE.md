@@ -33,7 +33,17 @@ npx expo install --fix   # align native module versions with the Expo SDK
 npm start                # Expo dev server (i = iOS simulator, a = Android)
 npm run typecheck && npm run lint && npm test
 ```
-Set `EXPO_PUBLIC_LIBRARY_URL` (see `.env.example`) to read a published library; unset, the app uses the bundled example.
+The app ships `src/data/library.bundled.json` (gitignored; private, nothing fetched at launch). `npm run bundle-library` copies `../pipeline/out/library.json` there; `postinstall` creates it if missing (pipeline build, else the schema example). Rebuild the app to update it. Set `EXPO_PUBLIC_LIBRARY_URL` (see `.env.example`) to fetch a library instead (development).
+
+## iOS build (private, ad hoc / EAS internal distribution)
+Personal use only: installed from a link on registered devices; not on TestFlight or the App Store.
+```bash
+npx eas-cli device:create         # once per iPhone: register its UDID (before building)
+npm run bundle-library            # after a pipeline build
+npx eas-cli build -p ios --profile personal
+```
+Open the build's install link on the iPhone (Developer Mode must be on: Settings → Privacy & Security). A build runs only on devices registered when it was built; register a new phone, then rebuild. The provisioning profile lasts about a year.
+EAS uploads per `../.easignore` (not .gitignore), which is how the bundled library reaches the cloud build.
 
 ## Playback
 - One player for the app (`PlayerProvider`). `usePlayer()` = what's playing, saved progress, actions; `usePlayerStatus()` = live position (2×/s). Only read the status context where live position is shown, so lists don't re-render while audio plays.
@@ -42,4 +52,4 @@ Set `EXPO_PUBLIC_LIBRARY_URL` (see `.env.example`) to read a published library; 
 - Lock-screen controls are seek −15/+30 (expo-audio has no remote next/previous for a single player). Background audio and lock-screen controls need a dev build (`npx expo run:ios`); Expo Go only covers foreground playback.
 
 ## Not built yet
-Favourites, offline cache of library.json, downloads for offline listening, YouTube/video playback, search, design system.
+Favourites, hosted library.json with on-device cache, downloads for offline listening, YouTube/video playback, search, design system.

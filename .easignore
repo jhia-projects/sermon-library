@@ -1,0 +1,30 @@
+# What EAS Build uploads. EAS reads this file INSTEAD of every .gitignore (root, app/, pipeline/),
+# so it repeats their rules. The one difference: app/src/data/library.bundled.json is uploaded,
+# because the app ships it (see app/scripts/bundle-library.mjs). Keep in step with the .gitignore files.
+
+# Pipeline: the app only needs schema/ from outside app/.
+pipeline/
+docs/
+.github/
+.claude/
+
+# Library builds (the bundled copy is NOT listed, so it is uploaded)
+library.json
+library-*.json
+!schema/library.example.json
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# App (Expo / Node)
+node_modules/
+.expo/
+dist/
+web-build/
+*.tsbuildinfo
+.env*.local
+ios/
+android/
+expo-env.d.ts
