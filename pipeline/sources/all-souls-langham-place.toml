@@ -26,10 +26,25 @@ min_book_share = 0.8
 # Exclude series by exact name (after aliasing).
 exclude = [
     "World Mission Sunday",  # annual occasion; its sermons happen to share a book some years
+    "The John Stott Centenary",  # Apr 2021: two occasion sermons the same day, both on Ephesians
+    "Questions From the Cross",  # Apr 2022: Holy Week to Easter Sunday (Luke 22-24), seasonal
+    # Lent-to-Easter series (owner decision 2026-11-17: all excluded except "Matthew's Passion", 2014,
+    # which works through Matthew 26-28 in 7 parts and is kept)
+    "Three Days That Changed the World",  # 2018, Luke 22-24
+    "Series from John's Gospel",  # Mar-Apr 2017, John 17-20
+    "Series from Luke's Gospel",  # Apr 2017, Luke 19-24
+    "At the End?",  # 1995, Luke 23
+    "The Glory of the Cross",  # Mar 2016, John 12
+    # Evangelistic and occasion series: passages picked for a theme, often two talks on one day
+    "The Time of Your Life",  # 1992, Luke 8/2/22/24
+    "Right at the Centre",  # 1994, Luke 12/5/16/15
+    "A Fresh Start to the Year",  # 1992, Matthew 4 and 9 on one day
+    "Workplace Sunday (Advice from the Boss)",  # 2008, Matthew 6 and 5 on one day
 ]
 # Exclude series whose name contains any of these (case-insensitive): the Christmas and Easter
 # seasons ("Easter" 2022 published two Luke 24 sermons as a book series before "easter" was added).
-exclude_patterns = ["christmas", "carol", "advent", "easter"]
+# "guest service": evangelistic services ("Guest Service" Oct 2021, Luke 2/12/23) aren't book studies.
+exclude_patterns = ["christmas", "carol", "advent", "easter", "guest service"]
 
 [aliases.series]
 # Spelling variants seen in the source -> canonical name. Case/punctuation differences are handled automatically.
@@ -38,6 +53,8 @@ exclude_patterns = ["christmas", "carol", "advent", "easter"]
 "Who Do You Say I Am" = "Who Do You Say That I Am"
 "Moderns Lessons From an Ancient Flood" = "Modern Lessons From an Ancient Flood"  # typo in source, Nov 2024
 "Romans 5: The Truly Free Life" = "Romans: The Truly Free Life"  # one series, Sep-Oct 2023
+"Inheritors of the Promise" = "Inheriting the Promise"  # Joshua 7-12 (Jan-Feb 2014) fills Joshua 1-6 (2013) / 13-24 (2014)
+"A CHURCH FOR ALL" = "CHURCH FOR ALL"  # Ephesians 1-3 (Oct-Nov 2018) then 3-6 (Jan-Mar 2019): one series
 "Matthew 4" = "Matthew"  # Sep-Oct 2023: rows labelled "Matthew 4" and "Matthew" all link the site's "Matthew" series page
 
 [aliases.speaker]
