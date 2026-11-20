@@ -1,0 +1,96 @@
+name: pipeline
+
+# Weekly: fetch new sermons, add them to the committed archives, rebuild library.json, and open (or
+# update) one PR. Nothing reaches main without review: the PR diff shows new archive rows and
+# data/series-report.txt shows every series published (+), skipped (-), kept off-book (~) or
+# trimmed (=). library.json is attached to the run; the app bundles it at build time.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC (scheduled runs only use the workflow on main)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: pipeline/uv.lock
+      - run: uv sync --frozen
+
+      - name: Tests and RSS-first policy
+        run: |
+          uv run pytest -q
+          uv run sermon-pipeline check-sources
+
+      # St Helen's: the feed carries only its latest 20 talks and no series labels, so new talk
+      # pages are added to data/st-helens-bishopsgate/talks.jsonl (only ever added to; talks
+      # already there are not fetched again). 2-3s per request.
+      - name: St Helen's new talk pages
+        run: uv run sermon-pipeline crawl-sthelens --newest --limit 50 | tee out-crawl.json
+
+      # Fails (and writes nothing) if a feed fails or the library doesn't validate. Only then are
+      # new All Souls sermons added to data/all-souls-langham-place/sermons.jsonl.
+      - name: Build
+        run: |
+          set -o pipefail
+          uv run sermon-pipeline build --update-snapshot --report data/series-report.txt \
+            --out out/library.json 2>&1 | tee build.log
+
+      - name: PR description
+        run: |
+          {
+            echo "Weekly pipeline run: new sermons added to the archives and library.json rebuilt."
+            echo
+            echo '```'
+            grep -E '^(wrote|INFO [a-z-]+: (rss=|snapshot))' build.log || true
+            echo '```'
+            echo
+            echo "**Review before merging** (precision beats recall): read the changes to"
+            echo "\`pipeline/data/series-report.txt\`: \`+\` published, \`-\` skipped (with reason),"
+            echo "\`~\` kept off-book sermons, \`=\` dropped repeated-service copies."
+            if grep -q 'review name' build.log; then
+              echo
+              echo "Near-duplicate names (alias in \`sources/<church>.toml\` or list in \`review.toml\`):"
+              echo '```'
+              grep 'review name' build.log | sed 's/^WARNING review name: //'
+              echo '```'
+            fi
+            echo
+            echo "library.json and the build log are attached to [the run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."
+            echo "To update the phone: merge, pull, build (or download the run's library.json into pipeline/out/),"
+            echo "\`npm run bundle-library\`, rebuild in Xcode."
+          } > "$RUNNER_TEMP/pr-body.md"
+          rm -f out-crawl.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: library-${{ github.run_number }}
+          path: |
+            pipeline/out/library.json
+            pipeline/build.log
+          retention-days: 30
+
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: weekly-library
+          delete-branch: true
+          add-paths: |
+            pipeline/data/**
+          commit-message: "Weekly: new sermons and series report"
+          title: "Weekly library update"
+          body-path: ${{ runner.temp }}/pr-body.md

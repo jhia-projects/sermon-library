@@ -37,6 +37,10 @@ def main(argv: list[str] | None = None) -> int:
         "--update-snapshot", action="store_true",
         help="after a valid build, add every sermon scraped to the church's archive (scrapers that opt in: allsouls)",
     )
+    b.add_argument(
+        "--report", type=Path, metavar="PATH",
+        help="also write the series log (+ published, - skipped, ~ off-book, = repeated) per church",
+    )
 
     v = sub.add_parser("validate", help="validate a library.json against schema + integrity rules")
     v.add_argument("path", type=Path)
@@ -96,6 +100,7 @@ def main(argv: list[str] | None = None) -> int:
         now = datetime.now(timezone.utc)
         churches = []
         snapshots: list[tuple[Path, list]] = []
+        report_lines: list[str] = []
         for cfg in sources:
             scraped: list = []
             sermons, _ = collect(
@@ -104,16 +109,15 @@ def main(argv: list[str] | None = None) -> int:
             if args.update_snapshot and cfg.snapshot_path and scraped:
                 snapshots.append((cfg.snapshot_path, scraped))
             church, report = build_church(cfg, sermons, now.date())
-            for line in report.published_series:
-                logging.info("  + %s", line)
-            for name, why in sorted(report.skipped_series.items()):
-                logging.info("  - %s: %s", name, why)
-            for name, n in sorted(report.kept_off_book.items()):
-                logging.info("  ~ %s: kept %d sermon(s) outside its book", name, n)
-            for name, n in sorted(report.repeated_services.items()):
-                logging.info("  = %s: dropped %d repeated-service copies", name, n)
+            lines = [f"+ {line}" for line in report.published_series]
+            lines += [f"- {name}: {why}" for name, why in sorted(report.skipped_series.items())]
+            lines += [f"~ {name}: kept {n} sermon(s) outside its book" for name, n in sorted(report.kept_off_book.items())]
+            lines += [f"= {name}: dropped {n} repeated-service copies" for name, n in sorted(report.repeated_services.items())]
             if report.dropped_sermons:
-                logging.info("  dropped sermons: %s", dict(report.dropped_sermons))
+                lines.append(f"dropped sermons: {dict(sorted(report.dropped_sermons.items()))}")
+            for line in lines:
+                logging.info("  %s", line)
+            report_lines += [f"## {cfg.church_id}", *lines, ""]
             churches.append(church)
         lib = build_library(churches, now)
         problems = validate_library(lib)
@@ -127,6 +131,9 @@ def main(argv: list[str] | None = None) -> int:
         for path, scraped in snapshots:
             n = write_snapshot(path, scraped)
             print(f"wrote {path}: {n} sermons")
+        if args.report:
+            args.report.parent.mkdir(parents=True, exist_ok=True)
+            args.report.write_text("\n".join(report_lines), encoding="utf-8")
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(lib, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"wrote {args.out}: {len(lib['series'])} series, "

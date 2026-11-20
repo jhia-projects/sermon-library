@@ -22,7 +22,7 @@ church RSS feeds (primary)
 - `pipeline/` — scrapers/feed readers per church → normalised `library.json`. See `pipeline/CLAUDE.md`.
 - `app/` — Expo (React Native + TypeScript) app that fetches `library.json`. See `app/CLAUDE.md`.
 - `.claude/skills/` — `/add-church` (new source end-to-end), `/release` (app release).
-- `.github/workflows/` — `pipeline.yml` (weekly cron: build, validate, publish `library.json`), `app.yml` (lint/typecheck/test, EAS build).
+- `.github/workflows/` — `pipeline.yml` (weekly cron: new sermons into the committed archives, build, validate, open a `weekly-library` PR for review; `library.json` attached to the run), `app.yml` (lint/typecheck/test; EAS build not set up).
 
 ## Rules
 1. **Schema first.** Any change to the data shape starts in `schema/library.schema.json`, then update `library.example.json`, then pipeline, then app — in the same PR.

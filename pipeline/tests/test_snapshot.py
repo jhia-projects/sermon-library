@@ -97,3 +97,17 @@ def test_only_opted_in_scrapers_rewrite_their_archive():
 
     assert get_scraper("allsouls").updates_snapshot is True
     assert get_scraper("sthelens").updates_snapshot is False
+
+
+def test_build_report_lists_series_per_church(tmp_path, monkeypatch):
+    """`build --report` is what the weekly PR diffs: one section per church, one line per series."""
+    from sermon_pipeline import cli
+
+    monkeypatch.setattr(cli, "PoliteFetcher", lambda *a, **kw: FakeFetcher())
+    report = tmp_path / "series-report.txt"
+    args = ["build", "--source", str(SOURCES_DIR / "all-souls-langham-place.toml"),
+            "--report", str(report), "--out", str(tmp_path / "library.json")]
+    assert cli.main(args) == 0
+    lines = report.read_text(encoding="utf-8").splitlines()
+    assert lines[0] == "## all-souls-langham-place"
+    assert any(line.startswith("+ ") for line in lines) and any(line.startswith("- ") for line in lines)
