@@ -4,3 +4,49 @@
 # [[speaker.distinct]]
 # names = ["John Smith", "Jon Smith"]
 # note = "two different people; checked church staff page 2026-11-16"
+
+# All Souls, confirmed different by the project owner 2026-11-19 (full archive build)
+[[series.distinct]]
+names = ["The Secret of Contentment", "The secret to contentment"]
+note = "Philippians, 2008 and 2016: separate series eight years apart"
+
+[[series.distinct]]
+names = ["Face to Face (Encounters in John's Gospel)", "Face to Face (Interviews with Jesus in John's Gospel)"]
+note = "John, 1998 and 2001: separate series"
+
+[[series.distinct]]
+names = ["For me to live is Christ", "To Me To Live is Christ"]
+note = "Philippians, 1979-80 (19 talks) and 1990 (4 talks): separate series"
+
+[[series.distinct]]
+names = ["A STING IN THE TALE", "A Winter's Tale"]
+note = "Luke, 2012 and 2018 vs 1995: different series that share a word"
+
+# St Helen's Bishopsgate, reviewed 2026-11-20 (full archive build): different names for different series
+[[series.distinct]]
+names = ["Psalm 139", "Psalm 19"]
+note = "1986 and 1988: different psalms"
+
+[[series.distinct]]
+names = ["1 Corinthians 3-4", "1 Corinthians 6-7"]
+note = "1997: different chapters"
+
+[[series.distinct]]
+names = ["Acts 17", "Acts 2"]
+note = "1988 and 1997: different chapters"
+
+[[series.distinct]]
+names = ["Assurance", "Reassurance"]
+note = "1 John, 1987 (ch. 2) and 2007-08 (whole letter): separate series"
+
+[[series.distinct]]
+names = ["What on earth is God doing?", "What on earth is The Spirit doing?"]
+note = "John 5 (2002, 2009) and John 14-16 (1995): different series"
+
+[[series.distinct]]
+names = ["The kingdom of heaven is like", "The kingdom of heaven is like this"]
+note = "Matthew parables, 1983 and 1991: separate series, the church's own titles"
+
+[[series.distinct]]
+names = ["Mark revisited vol 1: From my study to yours", "Mark revisited vol.2: From my study to yours"]
+note = "Two volumes, 2016 and 2017: separate series"

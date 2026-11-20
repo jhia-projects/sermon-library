@@ -1,4 +1,4 @@
-"""sermon-pipeline {check-sources,build,validate,review-names}."""
+"""sermon-pipeline {check-sources,build,validate,review-names,crawl-sthelens}."""
 
 from __future__ import annotations
 
@@ -38,6 +38,15 @@ def main(argv: list[str] | None = None) -> int:
     r = sub.add_parser("review-names", help="flag near-duplicate speaker/series names for human review")
     r.add_argument("path", type=Path)
 
+    c = sub.add_parser(
+        "crawl-sthelens",
+        help="St Helen's Bishopsgate: fetch sitemaps + talk pages (cached, resumable, 2-3s/request)",
+    )
+    c.add_argument("--out", type=Path, default=Path("out/st-helens-bishopsgate"))
+    c.add_argument("--limit", type=int, default=5, help="new (uncached) talk pages to fetch (default 5)")
+    c.add_argument("--newest", action="store_true", help="walk the sitemap newest id first (default oldest)")
+    c.add_argument("--id", dest="ids", action="append", metavar="TALK_ID", help="fetch these talk ids instead")
+
     args = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
@@ -68,6 +77,13 @@ def main(argv: list[str] | None = None) -> int:
             print("no unreviewed near-duplicate names")
             return 0
 
+        if args.cmd == "crawl-sthelens":
+            from .scrapers.sthelens import crawl
+
+            summary = crawl(args.out, limit=args.limit, ids=args.ids, newest_first=args.newest)
+            print(json.dumps(summary, ensure_ascii=False, indent=1))
+            return 0
+
         # build
         sources = [load_source(s) for s in args.source] if args.source else load_all_sources()
         fetcher = PoliteFetcher()
@@ -82,6 +98,8 @@ def main(argv: list[str] | None = None) -> int:
                 logging.info("  - %s: %s", name, why)
             for name, n in sorted(report.kept_off_book.items()):
                 logging.info("  ~ %s: kept %d sermon(s) outside its book", name, n)
+            for name, n in sorted(report.repeated_services.items()):
+                logging.info("  = %s: dropped %d repeated-service copies", name, n)
             if report.dropped_sermons:
                 logging.info("  dropped sermons: %s", dict(report.dropped_sermons))
             churches.append(church)

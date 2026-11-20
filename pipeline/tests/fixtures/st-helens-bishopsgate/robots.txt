@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /resources/all/*
+Disallow: /resources/article/1785/
+Disallow: /_util/login/*
+Sitemap: https://www.st-helens.org.uk/sitemap.xml 

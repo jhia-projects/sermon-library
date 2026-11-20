@@ -43,4 +43,8 @@ uv run sermon-pipeline check-sources                # RSS-first config policy
 uv run sermon-pipeline build --out out/library.json # live build (validated before write)
 uv run sermon-pipeline review-names out/library.json # flag near-duplicate names
 ```
-App commands: TBD once `app/` is scaffolded.
+```bash
+cd app && npm install && npx expo install --fix
+npm start                                          # Expo dev server
+npm run typecheck && npm run lint && npm test
+```

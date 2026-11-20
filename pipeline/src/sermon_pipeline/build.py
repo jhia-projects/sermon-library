@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+
 import logging
+import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
@@ -31,14 +33,15 @@ def collect(
     cfg: SourceConfig, fetcher: Fetcher, *, scrape: bool = True, archive_pages: int = 0
 ) -> tuple[list[RawSermon], policy.MergeReport]:
     rss_items: list[RawSermon] = []
-    if cfg.rss_url:
+    for url in cfg.rss_urls:
         # Any exception here propagates: policy rule 2, never fall back to scraping.
-        rss_items = parse_feed(fetcher.get(cfg.rss_url))
-        policy.require_feed_items(cfg, rss_items)
+        items = parse_feed(fetcher.get(url), cfg.rss_format)
+        policy.require_feed_items(cfg, items, url)
+        rss_items.extend(items)
 
     scraped: list[RawSermon] = []
     if scrape and cfg.scraper:
-        scraper = get_scraper(cfg.scraper)(cfg, fetcher, archive_pages=archive_pages)
+        scraper = get_scraper(cfg.scraper)(cfg, fetcher, archive_pages=archive_pages, rss_items=rss_items)
         scraped = scraper.run()
         log.info("%s: scraper fetched %d pages", cfg.church_id, scraper.pages_fetched)
 
@@ -57,6 +60,7 @@ class BuildReport:
     skipped_series: dict[str, str] = field(default_factory=dict)  # name -> reason
     dropped_sermons: Counter[str] = field(default_factory=Counter)  # reason -> count
     kept_off_book: dict[str, int] = field(default_factory=dict)  # series -> sermons not in its book
+    repeated_services: dict[str, int] = field(default_factory=dict)  # series -> copies dropped
 
 
 def build_church(cfg: SourceConfig, sermons: list[RawSermon], today: date) -> tuple[dict, BuildReport]:
@@ -65,6 +69,10 @@ def build_church(cfg: SourceConfig, sermons: list[RawSermon], today: date) -> tu
     excluded = {series_key(aliases.get(series_key(n), n)) for n in cfg.exclude_series}
 
     def canonical(name: str) -> str:
+        if cfg.one_per_service_half:
+            # "The gospel goes viral (4pm)" + "(6pm)": one series run at two services, labelled
+            # per service. Merge them; _one_per_service_half then keeps one copy per date.
+            name = strip_service_suffix(name)
         return aliases.get(series_key(name), name)
 
     explicit_keys = {
@@ -94,6 +102,8 @@ def build_church(cfg: SourceConfig, sermons: list[RawSermon], today: date) -> tu
         if key in excluded or any(p.casefold() in name.casefold() for p in cfg.exclude_patterns):
             report.skipped_series[name] = "excluded in config"
             continue
+        if cfg.one_per_service_half:
+            members = _one_per_service_half(name, members, report)
         for run in _split_runs(members):
             label = f"{name} ({run[0].date or '?'})"
             built = _build_series(cfg, name, run, today, report, label)
@@ -121,6 +131,60 @@ def build_church(cfg: SourceConfig, sermons: list[RawSermon], today: date) -> tu
     return {"church": church, "speakers": speakers, "series": series_out}, report
 
 
+_SERVICE_TIME = re.compile(r"^(\d{1,2})(?:[.:](\d{2}))?\s*(am|pm)$", re.IGNORECASE)
+
+
+_SERVICE_SUFFIX = re.compile(r"\s*\(\s*(\d{1,2}(?:[.:]\d{2})?\s*(?:am|pm))\s*\)\s*$", re.IGNORECASE)
+
+
+def strip_service_suffix(name: str) -> str:
+    """'Pilgrim psalms (4pm)' -> 'Pilgrim psalms'. Only a bracketed time at the very end."""
+    m = _SERVICE_SUFFIX.search(name)
+    return name[: m.start()] if m and service_minutes(m[1]) is not None else name
+
+
+def service_minutes(text: str | None) -> int | None:
+    """'9.30am' -> 570, '6pm' -> 1080, '12 noon' -> 720. None if not a time."""
+    if not text:
+        return None
+    t = text.strip().casefold()
+    if t in {"noon", "12 noon"}:
+        return 12 * 60
+    m = _SERVICE_TIME.match(t)
+    if m is None:
+        return None
+    h, mins, ampm = int(m[1]), int(m[2] or 0), m[3].casefold()
+    if not 1 <= h <= 12 or mins > 59:
+        return None
+    return (h % 12 + (12 if ampm == "pm" else 0)) * 60 + mins
+
+
+def _one_per_service_half(name: str, members: list[RawSermon], report: BuildReport) -> list[RawSermon]:
+    """Keep one copy per (date, morning|evening) in a series: the earliest service, then lowest id.
+
+    A sermon without a date or a readable service time is never dropped (precision over recall).
+    """
+    best: dict[tuple[date, bool], RawSermon] = {}
+    drop: set[int] = set()
+    for s in members:
+        mins = service_minutes(s.service_time)
+        if s.date is None or mins is None:
+            continue
+        slot = (s.date, mins >= 12 * 60)
+        cur = best.get(slot)
+        if cur is None:
+            best[slot] = s
+            continue
+        rank = lambda x: (service_minutes(x.service_time), _media_order(x.source_key))  # noqa: E731
+        keep, lose = (s, cur) if rank(s) < rank(cur) else (cur, s)
+        best[slot] = keep
+        drop.add(id(lose))
+    if drop:
+        report.repeated_services[name] = len(drop)
+        report.dropped_sermons["repeated service"] += len(drop)
+    return [s for s in members if id(s) not in drop]
+
+
 def _display_name(key: str, spellings: Counter[str], aliases: dict[str, str]) -> str:
     for target in aliases.values():
         if series_key(target) == key:
@@ -133,7 +197,9 @@ def _split_runs(members: list[RawSermon]) -> list[list[RawSermon]]:
 
     A name reused after a longer silence starts a new series (e.g. 'Romans' in 1985 and 2012).
     """
-    dated = sorted((m for m in members if m.date), key=lambda m: (m.date, _media_order(m.source_key)))
+    dated = sorted(
+        (m for m in members if m.date), key=lambda m: (m.date, _talk_number(m.title), _media_order(m.source_key))
+    )
     runs: list[list[RawSermon]] = []
     for m in dated:
         if runs and (m.date - runs[-1][-1].date).days <= LOOK_FORWARD_DAYS:
@@ -141,6 +207,16 @@ def _split_runs(members: list[RawSermon]) -> list[list[RawSermon]]:
         else:
             runs.append([m])
     return runs
+
+
+# Several talks on one date (a teaching day: "Romansfest Talk 1" ... "Talk 19", all 2001-03-01) are
+# ordered by the number the source prints at the end of the title; their media ids don't follow it.
+_TALK_NUMBER = re.compile(r"\bTalk\s+(\d+)\s*$", re.IGNORECASE)
+
+
+def _talk_number(title: str | None) -> int:
+    m = _TALK_NUMBER.search(title or "")
+    return int(m[1]) if m else 0
 
 
 def _media_order(key: str) -> tuple[int, str]:
@@ -172,6 +248,11 @@ def _build_series(
         return None
     if n < len(run):
         report.kept_off_book[label] = len(run) - n
+
+    why = _untrusted_dates(cfg, run) or _topical_event(cfg, name, run, refs, book)
+    if why:
+        report.skipped_series[label] = why
+        return None
 
     span = (run[-1].date - run[0].date).days
     if span > MAX_SPAN_DAYS:
@@ -239,6 +320,42 @@ def _build_series(
     series["isComplete"] = not in_progress
     series["sermons"] = sermons_out
     return series
+
+
+def _untrusted_dates(cfg: SourceConfig, run: list[RawSermon]) -> str | None:
+    """Two or more sermons on a placeholder date ('01-01' = year known, day not): skip."""
+    if not cfg.placeholder_dates:
+        return None
+    dates = Counter(s.date for s in run if s.date.strftime("%m-%d") in cfg.placeholder_dates)
+    if dates and max(dates.values()) >= 2:
+        d, n = dates.most_common(1)[0]
+        return f"placeholder date: {n} sermons dated {d.isoformat()}"
+    return None
+
+
+def _topical_event(
+    cfg: SourceConfig, name: str, run: list[RawSermon], refs: dict[str, Reference | None], book: str
+) -> str | None:
+    """A weekend-away or same-day series counts as a book study only if it works forward.
+
+    These pass the one-book share easily (two talks, both in John) while being topical
+    (John 20, then John 1). Require the in-book passages, in sermon order, to start strictly
+    later in the book each time. Repeats (the same passage twice) also fail.
+    """
+    if not cfg.event_patterns:
+        return None
+    by_date = Counter(s.date for s in run)
+    same_day = len(run) >= 2 and max(by_date.values()) * 2 >= len(run) and max(by_date.values()) >= 2
+    if not (same_day or any(p.casefold() in name.casefold() for p in cfg.event_patterns)):
+        return None
+    starts = [
+        (r.start_chapter, r.start_verse or 0)
+        for s in run
+        if (r := refs[s.source_key]) is not None and r.book == book
+    ]
+    if any(b <= a for a, b in zip(starts, starts[1:])):
+        return f"topical event series: passages don't work forward through {book}"
+    return None
 
 
 def build_library(churches: list[dict], generated_at: datetime | None = None) -> dict:

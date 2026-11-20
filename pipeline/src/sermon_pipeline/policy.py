@@ -46,17 +46,29 @@ def check_source_config(cfg: SourceConfig) -> None:
             )
         if not cfg.scraper:
             raise PolicyError(f"{cid}: no RSS feed and no scraper; nothing to build from")
-    elif not cfg.rss_url.startswith("https://"):
-        raise PolicyError(f"{cid}: RSS url must be https: {cfg.rss_url}")
+    else:
+        for url in cfg.rss_urls:
+            if not url.startswith("https://"):
+                raise PolicyError(f"{cid}: RSS url must be https: {url}")
+        if len(set(cfg.rss_urls)) != len(cfg.rss_urls):
+            raise PolicyError(f"{cid}: duplicate RSS url")
+    if cfg.rss_more_urls and not cfg.rss_url:
+        raise PolicyError(f"{cid}: extra RSS urls without a primary one")
+    from .rss import FEED_FORMATS  # local import: rss -> models only, but keep policy import-light
+
+    if cfg.rss_format not in FEED_FORMATS:
+        raise PolicyError(f"{cid}: unknown [rss].format {cfg.rss_format!r}; known: {sorted(FEED_FORMATS)}")
 
 
 # --- 2. no silent fallback ------------------------------------------------------------------
 
 
-def require_feed_items(cfg: SourceConfig, items: list[RawSermon]) -> None:
-    if cfg.rss_url and not items:
+def require_feed_items(cfg: SourceConfig, items: list[RawSermon], url: str | None = None) -> None:
+    """Every configured feed must yield sermons; checked per feed when a church has several."""
+    url = url or cfg.rss_url
+    if url and not items:
         raise PolicyError(
-            f"{cfg.church_id}: RSS feed {cfg.rss_url} returned no sermons. Refusing to fall back "
+            f"{cfg.church_id}: RSS feed {url} returned no sermons. Refusing to fall back "
             "to scraping; fix the feed URL or parser."
         )
 

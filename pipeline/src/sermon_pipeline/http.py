@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 import ssl
 import time
 import urllib.error
@@ -13,7 +14,7 @@ from urllib.parse import urlsplit
 
 import certifi
 
-USER_AGENT = "sermon-library-pipeline/0.1 (RSS-first sermon index)"
+USER_AGENT = "sermonorganiser/0.1"
 MIN_DELAY_SECONDS = 2.0
 _SSL = ssl.create_default_context(cafile=certifi.where())
 
@@ -29,11 +30,28 @@ class RobotsDisallowed(Exception):
 
 
 class PoliteFetcher:
-    def __init__(self, user_agent: str = USER_AGENT, timeout: float = 30.0) -> None:
+    def __init__(
+        self,
+        user_agent: str = USER_AGENT,
+        timeout: float = 30.0,
+        *,
+        min_delay: float = MIN_DELAY_SECONDS,
+        delay_jitter: float = 0.0,
+    ) -> None:
+        if min_delay < MIN_DELAY_SECONDS:
+            raise ValueError(f"min_delay must be >= {MIN_DELAY_SECONDS}s")
         self.user_agent = user_agent
         self.timeout = timeout
+        self.min_delay = min_delay
+        # Extra random wait (0..delay_jitter s) on top of the delay, so requests aren't metronomic.
+        self.delay_jitter = delay_jitter
         self._robots: dict[str, urllib.robotparser.RobotFileParser] = {}
         self._last_hit: dict[str, float] = {}
+
+    def allowed(self, url: str) -> bool:
+        """robots.txt verdict for this user agent (fetches robots.txt for the host if needed)."""
+        parts = urlsplit(url)
+        return self._robots_for(f"{parts.scheme}://{parts.netloc}").can_fetch(self.user_agent, url)
 
     def get(self, url: str) -> str:
         return self._request(url, None)
@@ -50,7 +68,8 @@ class PoliteFetcher:
         robots = self._robots_for(f"{parts.scheme}://{host}")
         if not robots.can_fetch(self.user_agent, url):
             raise RobotsDisallowed(url)
-        delay = max(float(robots.crawl_delay(self.user_agent) or 0), MIN_DELAY_SECONDS)
+        delay = max(float(robots.crawl_delay(self.user_agent) or 0), self.min_delay)
+        delay += random.uniform(0, self.delay_jitter) if self.delay_jitter > 0 else 0.0
         wait = self._last_hit.get(host, 0) + delay - time.monotonic()
         if wait > 0:
             time.sleep(wait)
