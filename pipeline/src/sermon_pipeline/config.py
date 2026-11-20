@@ -24,8 +24,8 @@ class SourceConfig:
     scraper: str | None = None
     media_page_url: str | None = None
     series_pages: tuple[str, ...] = ()
-    # Committed result of a one-off crawl (JSON lines), relative to pipeline/. Scrapers that have
-    # one read it instead of re-crawling the archive every build.
+    # The church's committed sermon archive (JSON lines, relative to pipeline/; see snapshot.py):
+    # seeded by a one-off crawl. Scrapers that have one read it instead of re-crawling every build.
     snapshot: str | None = None
     # Keep only sermons dated on a Sunday (drops midweek talks from a mixed archive).
     sunday_only: bool = False
@@ -46,6 +46,10 @@ class SourceConfig:
     placeholder_dates: tuple[str, ...] = ()
     series_aliases: dict[str, str] = field(default_factory=dict)
     speaker_aliases: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def snapshot_path(self) -> Path | None:
+        return PIPELINE_DIR / self.snapshot if self.snapshot else None
 
     @property
     def church_id(self) -> str:

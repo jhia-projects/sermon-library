@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -49,4 +50,6 @@ def fetcher() -> FakeFetcher:
 
 @pytest.fixture
 def all_souls() -> SourceConfig:
-    return load_source(SOURCES_DIR / "all-souls-langham-place.toml")
+    """The real config without its committed archive, so tests see fixtures only (test_snapshot.py
+    covers the archive)."""
+    return replace(load_source(SOURCES_DIR / "all-souls-langham-place.toml"), snapshot=None)

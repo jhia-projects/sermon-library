@@ -14,6 +14,7 @@ from .config import SOURCES_DIR, load_all_sources, load_source
 from .http import PoliteFetcher
 from .names import REVIEW_PATH, review_library
 from .policy import PolicyError
+from .snapshot import write_snapshot
 from .validate import validate_library
 
 
@@ -30,6 +31,11 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument(
         "--archive-pages", type=int, default=0, metavar="N",
         help="also crawl N archive listing pages beyond the first (backfill; ~10s per page)",
+    )
+
+    b.add_argument(
+        "--update-snapshot", action="store_true",
+        help="after a valid build, add every sermon scraped to the church's archive (scrapers that opt in: allsouls)",
     )
 
     v = sub.add_parser("validate", help="validate a library.json against schema + integrity rules")
@@ -89,8 +95,14 @@ def main(argv: list[str] | None = None) -> int:
         fetcher = PoliteFetcher()
         now = datetime.now(timezone.utc)
         churches = []
+        snapshots: list[tuple[Path, list]] = []
         for cfg in sources:
-            sermons, _ = collect(cfg, fetcher, scrape=not args.no_scrape, archive_pages=args.archive_pages)
+            scraped: list = []
+            sermons, _ = collect(
+                cfg, fetcher, scrape=not args.no_scrape, archive_pages=args.archive_pages, scraped_out=scraped
+            )
+            if args.update_snapshot and cfg.snapshot_path and scraped:
+                snapshots.append((cfg.snapshot_path, scraped))
             church, report = build_church(cfg, sermons, now.date())
             for line in report.published_series:
                 logging.info("  + %s", line)
@@ -112,6 +124,9 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         for pair in review_library(lib):
             logging.warning("review name: %s %r ~ %r (%s)", pair.kind, pair.a, pair.b, pair.reason)
+        for path, scraped in snapshots:
+            n = write_snapshot(path, scraped)
+            print(f"wrote {path}: {n} sermons")
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(lib, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"wrote {args.out}: {len(lib['series'])} series, "

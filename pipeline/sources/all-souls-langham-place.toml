@@ -18,6 +18,9 @@ scraper = "allsouls"
 media_page_url = "https://www.allsouls.org/Media/AllMedia.aspx"
 # Extra series pages to backfill beyond those linked from the media page's first page.
 series_pages = []
+# Committed archive of every sermon scraped so far (see src/sermon_pipeline/snapshot.py). Seeded
+# from the full archive crawl (653 pages, 1971-2026); `build --update-snapshot` adds new sermons.
+snapshot = "data/all-souls-langham-place/sermons.jsonl"
 
 [series]
 # Share of a series' sermons that must have a reference in its one book (0.8 to 1.0; 0.8 is the

@@ -13,6 +13,10 @@ from ..policy import check_page_for_feed
 
 class Scraper:
     name: ClassVar[str]
+    # True when everything run() returns may be written back as the church's archive
+    # (`build --update-snapshot`, snapshot.py). False for scrapers that filter what they read
+    # (St Helen's drops midweek talks) or keep their archive another way (crawl-sthelens).
+    updates_snapshot: ClassVar[bool] = False
 
     def __init__(
         self,
