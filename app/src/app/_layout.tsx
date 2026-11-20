@@ -5,16 +5,19 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { MiniPlayer } from "@/components/MiniPlayer";
 import { LibraryProvider } from "@/data/LibraryProvider";
+import { DownloadsProvider } from "@/downloads/DownloadsProvider";
 import { PlayerProvider } from "@/player/PlayerProvider";
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <LibraryProvider>
-        <PlayerProvider>
-          <RootStack />
-          <StatusBar style="auto" />
-        </PlayerProvider>
+        <DownloadsProvider>
+          <PlayerProvider>
+            <RootStack />
+            <StatusBar style="auto" />
+          </PlayerProvider>
+        </DownloadsProvider>
       </LibraryProvider>
     </SafeAreaProvider>
   );

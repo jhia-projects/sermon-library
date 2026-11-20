@@ -1,10 +1,12 @@
 import { Stack, useLocalSearchParams } from "expo-router";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { DownloadButton, SeriesDownloadButton } from "@/components/DownloadButton";
 import { LibraryGate } from "@/components/LibraryGate";
 import { Row } from "@/components/Row";
 import { bookName } from "@/data/books";
 import { findSeries, isInSeriesBook, speakerName } from "@/data/selectors";
+import { useDownloads } from "@/downloads/DownloadsProvider";
 import { countLabel, formatDate, formatMinutes } from "@/format";
 import { usePlayer } from "@/player/PlayerProvider";
 import { continueTarget, isPlayable, type SermonProgress } from "@/player/rules";
@@ -19,6 +21,7 @@ import type { Sermon } from "@/types/library";
 export default function SeriesScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { current, progress, play } = usePlayer();
+  const downloads = useDownloads();
   return (
     <LibraryGate>
       {(lib) => {
@@ -34,7 +37,7 @@ export default function SeriesScreen() {
               contentInsetAdjustmentBehavior="automatic"
               data={series.sermons}
               keyExtractor={(m) => m.id}
-              extraData={[current?.sermon.id, progress]}
+              extraData={[current?.sermon.id, progress, downloads]}
               ListHeaderComponent={
                 <View style={styles.header}>
                   <Text style={styles.meta}>
@@ -48,6 +51,7 @@ export default function SeriesScreen() {
                       </Text>
                     </Pressable>
                   ) : null}
+                  <SeriesDownloadButton series={series} />
                 </View>
               }
               renderItem={({ item: m, index }) => {
@@ -64,6 +68,7 @@ export default function SeriesScreen() {
                     ]
                       .filter(Boolean)
                       .join(" · ")}
+                    accessory={<DownloadButton series={series} sermon={m} />}
                     disabled={!isPlayable(m)}
                     onPress={() => play(series, m)}
                     accessibilityHint="Plays this sermon"
