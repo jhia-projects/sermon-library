@@ -27,10 +27,15 @@ sunday_only = true
 [series]
 min_book_share = 0.8
 exclude = []
-exclude_patterns = ["christmas", "carol", "advent", "easter"]
+# "Week of talks": evangelistic mission talks, topical by design (2015: John 20, then John 1).
+exclude_patterns = ["christmas", "carol", "advent", "easter", "week of talks"]
 # The same sermon is preached at 9.30am + 11.15am (morning) and 4pm + 6pm (evening). Keep one copy
 # per date per morning/evening: the earliest service.
 one_per_service_half = true
+# Weekend aways and same-day series: kept only if the passages work forward through the book.
+event_patterns = ["weekend"]
+# The pre-2000 archive dates talks 1 January when only the year is known.
+placeholder_dates = ["01-01"]
 
 [aliases.series]
 # Typo in the 6pm label (2022): same Proverbs series, same talks and dates as the 4pm one.

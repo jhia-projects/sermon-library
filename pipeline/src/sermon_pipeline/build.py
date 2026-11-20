@@ -249,6 +249,11 @@ def _build_series(
     if n < len(run):
         report.kept_off_book[label] = len(run) - n
 
+    why = _untrusted_dates(cfg, run) or _topical_event(cfg, name, run, refs, book)
+    if why:
+        report.skipped_series[label] = why
+        return None
+
     span = (run[-1].date - run[0].date).days
     if span > MAX_SPAN_DAYS:
         report.skipped_series[label] = f"spans {span / 365.25:.1f} years (max 3)"
@@ -315,6 +320,42 @@ def _build_series(
     series["isComplete"] = not in_progress
     series["sermons"] = sermons_out
     return series
+
+
+def _untrusted_dates(cfg: SourceConfig, run: list[RawSermon]) -> str | None:
+    """Two or more sermons on a placeholder date ('01-01' = year known, day not): skip."""
+    if not cfg.placeholder_dates:
+        return None
+    dates = Counter(s.date for s in run if s.date.strftime("%m-%d") in cfg.placeholder_dates)
+    if dates and max(dates.values()) >= 2:
+        d, n = dates.most_common(1)[0]
+        return f"placeholder date: {n} sermons dated {d.isoformat()}"
+    return None
+
+
+def _topical_event(
+    cfg: SourceConfig, name: str, run: list[RawSermon], refs: dict[str, Reference | None], book: str
+) -> str | None:
+    """A weekend-away or same-day series counts as a book study only if it works forward.
+
+    These pass the one-book share easily (two talks, both in John) while being topical
+    (John 20, then John 1). Require the in-book passages, in sermon order, to start strictly
+    later in the book each time. Repeats (the same passage twice) also fail.
+    """
+    if not cfg.event_patterns:
+        return None
+    by_date = Counter(s.date for s in run)
+    same_day = len(run) >= 2 and max(by_date.values()) * 2 >= len(run) and max(by_date.values()) >= 2
+    if not (same_day or any(p.casefold() in name.casefold() for p in cfg.event_patterns)):
+        return None
+    starts = [
+        (r.start_chapter, r.start_verse or 0)
+        for s in run
+        if (r := refs[s.source_key]) is not None and r.book == book
+    ]
+    if any(b <= a for a, b in zip(starts, starts[1:])):
+        return f"topical event series: passages don't work forward through {book}"
+    return None
 
 
 def build_library(churches: list[dict], generated_at: datetime | None = None) -> dict:

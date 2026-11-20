@@ -37,6 +37,13 @@ class SourceConfig:
     # 4pm + 6pm) appears once per service. When true, a series keeps one copy per morning and one
     # per evening service each date: the earliest service.
     one_per_service_half: bool = False
+    # Weekend-away / conference series (case-insensitive substrings of the name, e.g. "weekend").
+    # Such a series, or any series with at least half its sermons on one date, is kept only if
+    # its in-book passages work forward through the book; otherwise it is topical and skipped.
+    event_patterns: tuple[str, ...] = ()
+    # Month-day strings ("01-01") a source uses when it knows only the year. A series with two or
+    # more sermons on one such date is skipped: its dates and order can't be trusted.
+    placeholder_dates: tuple[str, ...] = ()
     series_aliases: dict[str, str] = field(default_factory=dict)
     speaker_aliases: dict[str, str] = field(default_factory=dict)
 
@@ -74,6 +81,8 @@ class SourceConfig:
             exclude_series=tuple(series.get("exclude", ())),
             exclude_patterns=tuple(series.get("exclude_patterns", ())),
             one_per_service_half=bool(series.get("one_per_service_half", False)),
+            event_patterns=tuple(series.get("event_patterns", ())),
+            placeholder_dates=tuple(series.get("placeholder_dates", ())),
             series_aliases=dict(aliases.get("series", {})),
             speaker_aliases=dict(aliases.get("speaker", {})),
         )

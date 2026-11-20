@@ -5,7 +5,7 @@ from __future__ import annotations
 import dataclasses
 import urllib.error
 import urllib.robotparser
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
@@ -388,8 +388,14 @@ def test_repeated_services_rule_is_off_by_default():
     assert sum(len(se["sermons"]) for se in church["series"]) == len(feed_series())
 
 
+def _services_only():
+    """The St Helen's config with just the repeated-service rule (these fixtures are tiny same-day
+    series, which the weekend/same-day rule would judge separately)."""
+    return dataclasses.replace(load_source(SOURCES_DIR / "st-helens-bishopsgate.toml"), event_patterns=())
+
+
 def test_morning_and_evening_copies_both_stay():
-    cfg = load_source(SOURCES_DIR / "st-helens-bishopsgate.toml")
+    cfg = _services_only()
     am, pm = [s for s in feed_series() if s.date == date(2026, 11, 15)][:1] * 2
     am = dataclasses.replace(am, source_key="1", service_time="10.30am", provenance={})
     pm = dataclasses.replace(pm, source_key="2", service_time="6.30pm", provenance={})
@@ -399,7 +405,7 @@ def test_morning_and_evening_copies_both_stay():
 
 
 def test_copy_without_a_service_time_is_never_dropped():
-    cfg = load_source(SOURCES_DIR / "st-helens-bishopsgate.toml")
+    cfg = _services_only()
     base = [s for s in feed_series() if s.date == date(2026, 11, 15) and s.passage_text.startswith("John")]
     unknown = [dataclasses.replace(s, service_time=None, provenance={}) for s in base]
     church, report = build_church(cfg, unknown, date(2026, 11, 19))
@@ -433,3 +439,76 @@ def test_series_labelled_per_service_merge_into_one():
     assert report.repeated_services == {"The gospel goes viral": 2}
     off = dataclasses.replace(cfg, one_per_service_half=False)
     assert len(build_church(off, rows, date(2026, 11, 19))[0]["series"]) == 2
+
+
+# --- weekend / same-day series and placeholder dates ---------------------------------------
+
+from sermon_pipeline.models import RawSermon  # noqa: E402
+
+
+def _sermons(series: str, rows: list[tuple[str, str, str, str]]) -> list[RawSermon]:
+    return [
+        RawSermon(
+            source_key=key, origin="scrape", title=title, date=date.fromisoformat(d), speaker="A Speaker",
+            series_name=series, series_label_explicit=True, passage_text=ref,
+            audio_url=f"https://example.org/{key}.mp3",
+        )
+        for key, d, title, ref in rows
+    ]
+
+
+LORDS_PRAYER = _sermons("The Lord's Prayer", [  # 2023: Matthew 18, then Matthew 4, same Sunday
+    ("58073", "2023-02-12", "Prioritising forgiveness", "Matthew 18:21-35"),
+    ("58074", "2023-02-12", "Knowing what matters", "Matthew 4:1-11"),
+])
+LOVE_OF_GOD = _sermons("Love of God", [  # 2023: works forward through Romans 8
+    ("58152", "2023-05-14", "Working for good", "Romans 8:18-30"),
+    ("58153", "2023-05-14", "No separation", "Romans 8:31-39"),
+])
+RML_1THESS = _sermons("1 Thessalonians: RML Overview weekend", [  # the same two passages, 2014 and 2015
+    ("54139", "2014-11-23", "1 Thessalonians 4:13-5:11", "1 Thessalonians 4:13-5:11"),
+    ("54140", "2014-11-23", "1 Thessalonians 5:23-24", "1 Thessalonians 5:23-24"),
+    ("54642", "2015-11-15", "1 Thessalonians 4:13 - 5:11", "1 Thessalonians 4:13 - 5:11"),
+    ("54643", "2015-11-15", "1 Thessalonians 5:23-24", "1 Thessalonians 5:23-24"),
+])
+STOTT_1THESS = _sermons("Studies in 1 Thessalonians", [  # all three dated 1978-01-01 by the site
+    ("3081", "1978-01-01", "Christian evangelism", "1 Thessalonians 1:1-10"),
+    ("3082", "1978-01-01", "Christian ministry", "1 Thessalonians 2:1-3:13"),
+    ("3083", "1978-01-01", "Christian community", "1 Thessalonians 5:1-28"),
+])
+
+
+def _titles(cfg, sermons):
+    church, report = build_church(cfg, sermons, date(2026, 11, 19))
+    return [se["title"] for se in church["series"]], report
+
+
+def test_same_day_series_kept_only_if_it_works_through_the_book():
+    cfg = load_source(SOURCES_DIR / "st-helens-bishopsgate.toml")
+    titles, report = _titles(cfg, LORDS_PRAYER + LOVE_OF_GOD + RML_1THESS)
+    assert titles == ["Love of God"]
+    assert report.skipped_series["The Lord's Prayer (2023-02-12)"].startswith("topical event series")
+    assert report.skipped_series["1 Thessalonians: RML Overview weekend (2014-11-23)"].startswith("topical")
+
+
+def test_weekend_label_alone_triggers_the_check():
+    cfg = load_source(SOURCES_DIR / "st-helens-bishopsgate.toml")
+    spread = [dataclasses.replace(s, date=s.date + timedelta(days=7 * i)) for i, s in enumerate(LORDS_PRAYER)]
+    weekend = [dataclasses.replace(s, series_name="Prayer: City weekend") for s in spread]
+    assert _titles(cfg, spread)[0] == ["The Lord's Prayer"]  # weekly, unlabelled: not an event
+    assert _titles(cfg, weekend)[0] == []
+
+
+def test_placeholder_date_series_skipped():
+    cfg = load_source(SOURCES_DIR / "st-helens-bishopsgate.toml")
+    titles, report = _titles(cfg, STOTT_1THESS)
+    assert titles == [] and report.skipped_series["Studies in 1 Thessalonians (1978-01-01)"].startswith("placeholder")
+    one = [dataclasses.replace(s, date=date(1978, 1, 1) + timedelta(days=7 * i)) for i, s in enumerate(STOTT_1THESS)]
+    assert _titles(cfg, one)[0] == ["Studies in 1 Thessalonians"]  # one real 1 January Sunday is fine
+
+
+def test_event_and_placeholder_rules_off_by_default():
+    cfg = dataclasses.replace(
+        load_source(SOURCES_DIR / "st-helens-bishopsgate.toml"), event_patterns=(), placeholder_dates=()
+    )
+    assert len(_titles(cfg, LORDS_PRAYER + RML_1THESS + STOTT_1THESS)[0]) == 3
