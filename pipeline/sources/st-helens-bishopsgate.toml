@@ -40,3 +40,7 @@ placeholder_dates = ["01-01"]
 [aliases.series]
 # Typo in the 6pm label (2022): same Proverbs series, same talks and dates as the 4pm one.
 "A son in search on wisdom" = "A son in search of wisdom"
+# Same name spelled two ways (review-names, de-duplicated by the user 2026-11-20). The series stay
+# separate (1997 and 2006; 1998 and 2010): only the name is unified.
+"Sermon on the mount" = "The sermon on the mount"
+"Questions of discipleship (2010)" = "Questions of discipleship"
