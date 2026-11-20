@@ -10,6 +10,7 @@ uv run sermon-pipeline check-sources           # enforce RSS-first config policy
 uv run sermon-pipeline build --out out/library.json            # live: RSS + scrape backfill
 uv run sermon-pipeline build --no-scrape --out out/library.json # live: RSS only
 uv run sermon-pipeline build --archive-pages 5 --out out/library.json # + 5 archive pages (~10s each)
+uv run sermon-pipeline build --update-snapshot --out out/library.json # + add newly scraped All Souls sermons to data/
 uv run sermon-pipeline validate out/library.json
 uv run sermon-pipeline review-names out/library.json            # near-duplicate names
 uv run sermon-pipeline crawl-sthelens --limit 5                 # St Helen's: sitemaps + 5 new talk pages (cached), rewrites the snapshot
@@ -41,8 +42,19 @@ src/sermon_pipeline/
   validate.py    schema + referential integrity (gate before writing)
   http.py        PoliteFetcher: robots.txt, Crawl-delay (min 2s, optional jitter), https only
   crawl.py       CachedCrawler: disk cache so no URL is fetched twice; re-run to resume
+  snapshot.py    committed sermon archive (JSON lines): read/write, scraped data only
+data/<church-id>/             committed archive of every scraped sermon (`[scrape].snapshot`)
 tests/fixtures/<church-id>/   saved feed + pages; tests never hit the network
 ```
+
+## Archive (snapshot.py, `data/<church-id>/`)
+A church's scraped history is committed, so a build covers it without re-crawling the site.
+- It is scraped data (origin `scrape`): merged after the feed, so the feed still wins (RSS-first rule 4).
+- **All Souls** (`data/all-souls-langham-place/sermons.jsonl`, 6,461 sermons, 1971–2026): the scraper reads page 1, then the archive, then the series pages. `build --update-snapshot` writes back, after validation passes, every sermon that build scraped plus the archive, one row per `source_key`, first seen wins.
+- **Keep the listing order (newest first); never sort the file.** A series' display name is its most common spelling and a tie goes to the first sermon read, so sorting by id renamed 9 series (`REAL LIVES` vs `Real Lives`).
+- Only scrapers with `updates_snapshot = True` are written back. St Helen's is not: it drops midweek talks when reading, and `crawl-sthelens` owns `talks.jsonl`.
+- Tests use fixtures only: the `all_souls` fixture sets `snapshot=None`. `test_snapshot.py` checks the committed file loads.
+- Verified 2026-11-20: archive + page 1 gives the same `library.json` and `+ - ~` log as a full 653-page crawl (527 series / 3,346 sermons, 568 skipped).
 
 ## Series rules (build.py; re-checked in validate.py)
 This is the app's core feature; read `../docs/series-derivation.md` before changing it.
@@ -66,8 +78,8 @@ Use `/add-church`. In short: find the feed first (site `<link rel=alternate>`, p
 ## All Souls notes
 - Feed: `https://www.allsouls.org/Media/rss.xml`, about 12 months / ~100 items. guid `m_<media_id>`.
 - The scraper reads `/Media/AllMedia.aspx` page 1, the series pages it links to (`/Groups/<id>/<Name>.aspx`) and any listed in `series_pages`.
-- Archive: ~646 listing pages back to the 1970s, paged by ASP.NET postback (POST the page's own form with `hidden_page=N`). Crawled only with `--archive-pages N`; at Crawl-delay 10s a full crawl takes about 2 hours. Not yet run in full: only page 600 (Nov 1977) was tested, and it's the `archive_page_600.html` fixture.
-- The feed prints one reference per sermon (in the title); the listing's `References:` line can print several, and that's often where the in-book one is (e.g. a Psalm 22 sermon in a Mark series lists Mark 15:16-32). Series with OT "interludes" therefore usually need the listing rows, from page 1 or `--archive-pages`, to pass the 100% rule.
+- Archive: ~646 listing pages back to the 1970s, paged by ASP.NET postback (POST the page's own form with `hidden_page=N`). Crawled only with `--archive-pages N`; at Crawl-delay 10s a full crawl takes about 2 hours. Run in full once (653 pages, back to 1971) to seed the archive; builds don't need it again. Its raw pages are cached (gitignored) in `out/all-souls-langham-place/cache/`. Page 600 (Nov 1977) is the `archive_page_600.html` fixture.
+- The feed prints one reference per sermon (in the title); the listing's `References:` line can print several, and that's often where the in-book one is (e.g. a Psalm 22 sermon in a Mark series lists Mark 15:16-32). Series with OT "interludes" therefore usually need the listing rows (page 1 or the archive) to pass the book-share rule.
 - Archive rows differ from recent ones: `Reference:` (singular); file title `MP3 Audio` with format `64Kbps 13.4MB`; duration only as `Length: 29 minutes` (not parsed); group links carry a catalogue code (`ZA008 Genesis`); quoted titles (`'Did God say?'`).
 - robots.txt: `Crawl-delay: 10`. `/Media/` and `/Groups/` are allowed.
 - Known data quirks: `.mp3` in titles, `No Favorites`/`No Favourites`, `Ollie Lansdown` → aliased to `Ollie Lansdowne` (confirmed).
