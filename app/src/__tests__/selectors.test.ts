@@ -1,7 +1,7 @@
 import exampleLibrary from "../../../schema/library.example.json";
 import { BOOKS, bookName } from "../data/books";
 import { checkVersion, UnsupportedLibraryError } from "../data/library";
-import { booksWithSeries, findSeries, isInSeriesBook, neighbours, seriesForBook } from "../data/selectors";
+import { booksWithSeries, findSeries, isInSeriesBook, neighbours, seriesForBook, speakerRows } from "../data/selectors";
 import { formatDate, formatYearRange } from "../format";
 
 import type { Library } from "../types/library";
@@ -63,4 +63,31 @@ test("speaker and church filters narrow books and series", () => {
   expect(seriesForBook(lib, s.book, { churchId: s.churchId }).map((x) => x.id)).toContain(s.id);
   expect(booksWithSeries(lib, { speakerId: "nobody" })).toEqual([]);
   expect(seriesForBook(lib, s.book, { churchId: "other-church" })).toEqual([]);
+});
+
+test("speakerRows hides speakers under the series threshold until searched for", () => {
+  // Example library: Jane Doe and John Smith have 1 series each.
+  const names = (q: string, min: number) => speakerRows(lib, q, min).map((r) => r.speaker.name);
+  expect(names("", 1)).toEqual(["Jane Doe", "John Smith"]);
+  expect(speakerRows(lib, "", 1)[0]!.seriesCount).toBe(1);
+  expect(names("", 2)).toEqual([]); // below the threshold: hidden from the default list
+  expect(names("  ", 2)).toEqual([]); // whitespace is no query
+  expect(names("jane", 2)).toEqual(["Jane Doe"]); // ...but a search finds them
+  expect(names("DOE ja", 2)).toEqual(["Jane Doe"]); // any case, any word order, partial words
+  expect(names("Jané", 2)).toEqual(["Jane Doe"]); // accents ignored
+  expect(names("jane smith", 2)).toEqual([]); // every word must match the same name
+  expect(names("nobody", 2)).toEqual([]);
+});
+
+test("speakerRows hides first-name-only speakers until searched for", () => {
+  // Live case: All Souls credits some talks to just "Luke" (6 series).
+  const s = lib.series[0]!;
+  const withLuke: Library = {
+    ...lib,
+    speakers: [...lib.speakers, { id: "luke", name: "Luke" }],
+    series: [...lib.series, { ...s, id: "x", speakerIds: ["luke"] }],
+  };
+  const names = (q: string) => speakerRows(withLuke, q, 1).map((r) => r.speaker.name);
+  expect(names("")).toEqual(["Jane Doe", "John Smith"]);
+  expect(names("luke")).toEqual(["Luke"]);
 });
