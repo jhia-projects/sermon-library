@@ -159,6 +159,13 @@ def snapshot_row(s: RawSermon, html: str) -> dict:
     return row
 
 
+def _read_rows(path: Path) -> dict[str, dict]:
+    if not path.exists():
+        return {}
+    rows = (json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip())
+    return {r["source_key"]: r for r in rows}
+
+
 def write_snapshot(path: Path, rows: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     rows = sorted(rows, key=lambda r: int(r["source_key"]))
@@ -230,12 +237,13 @@ def crawl(
     snapshot: Path | None = SNAPSHOT,
     fetcher: Fetcher | None = None,
 ) -> dict:
-    """Fetch the sitemaps and up to `limit` uncrawled talk pages (or exactly `ids`), cached under
-    out_dir/cache, then rewrite the snapshot from *every* cached talk page.
+    """Fetch the sitemaps and up to `limit` new talk pages (or exactly `ids`), cached under
+    out_dir/cache, then add every cached talk page to the snapshot.
 
-    Re-running resumes: cached pages are never fetched again, and `limit` counts only new pages, so
-    repeated runs walk further through the sitemap. Also writes talks.txt / series.txt (sitemap URL
-    lists) to out_dir.
+    "New" means neither cached nor already in the snapshot, and `limit` counts only those, so
+    repeated runs walk further through the sitemap. The snapshot is only ever added to (a cached
+    page replaces its talk's row): with an empty cache, as in CI, a run adds the newest talks and
+    keeps the rest. Also writes talks.txt / series.txt (sitemap URL lists) to out_dir.
     """
     from ..crawl import CachedCrawler
     from ..http import PoliteFetcher
@@ -253,6 +261,7 @@ def crawl(
             log.warning("robots.txt no longer disallows /resources/all/; the hard guard still does")
 
     crawler = CachedCrawler(fetcher, out_dir / "cache", forbidden=is_forbidden, allowed=allowed)
+    kept = _read_rows(snapshot) if snapshot is not None else {}
     lists: dict[str, list[str]] = {}
     for name, url in SITEMAPS.items():
         body = crawler.get(url)
@@ -269,7 +278,7 @@ def crawl(
         todo = [f"{BASE}/resources/talk/{i}/" for i in ids]
     else:
         order = sorted(all_talks, key=lambda u: int(talk_id(u) or 0), reverse=newest_first)
-        todo = [u for u in order if not crawler.cached(u)][:limit]
+        todo = [u for u in order if not crawler.cached(u) and talk_id(u) not in kept][:limit]
 
     errors: list[dict] = []
     for n, url in enumerate(todo, 1):
@@ -279,7 +288,7 @@ def crawl(
         if html is None:
             errors.append({"url": url, "error": "client error (cached)"})
 
-    rows: list[dict] = []
+    rows: dict[str, dict] = dict(kept)
     for url in all_talks:
         if not crawler.cached(url):
             continue
@@ -287,16 +296,17 @@ def crawl(
         if html is None:
             continue
         try:
-            rows.append(snapshot_row(parse_talk_page(html, url), html))
+            row = snapshot_row(parse_talk_page(html, url), html)
+            rows[row["source_key"]] = row
         except ValueError as e:
             errors.append({"url": url, "error": str(e)})
     if snapshot is not None:
-        write_snapshot(snapshot, rows)
+        write_snapshot(snapshot, list(rows.values()))
     return {
         "sitemap_talks": len(lists["talks"]),
         "sitemap_series": len(lists["series"]),
         "crawled_talks": len(rows),
-        "remaining": sum(not crawler.cached(u) for u in all_talks),
+        "remaining": sum(not crawler.cached(u) and talk_id(u) not in rows for u in all_talks),
         "errors": errors,
         "network_requests": crawler.fetched,
     }

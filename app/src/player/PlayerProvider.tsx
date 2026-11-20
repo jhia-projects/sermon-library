@@ -1,6 +1,7 @@
 /**
  * One audio player for the whole app. Plays a sermon from its series, resumes from saved progress,
- * auto-advances in preached order and shows lock-screen controls.
+ * auto-advances in preached order and shows lock-screen controls. Plays a downloaded copy when there is one
+ * (src/downloads), and fetches the next few sermons ahead so a series carries on without signal.
  *
  * Two contexts: `usePlayer()` (what's playing, saved progress, actions) changes rarely; `usePlayerStatus()`
  * (position, playing, buffering) updates twice a second. Only components that show live position should
@@ -13,6 +14,7 @@ import { adjacentPlayable, isFinished, nextRate, resumeFrom, type SermonProgress
 import { loadAllProgress, loadLastPlayed, saveLastPlayed, saveProgress } from "./storage";
 
 import { useLibraryState } from "@/data/LibraryProvider";
+import { useDownloadActions } from "@/downloads/DownloadsProvider";
 import { findSeries, speakerName } from "@/data/selectors";
 import type { Series, Sermon } from "@/types/library";
 
@@ -44,6 +46,7 @@ const StatusContext = createContext<AudioStatus | null>(null);
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const libState = useLibraryState();
   const lib = libState.status === "ready" ? libState.library : undefined;
+  const downloads = useDownloadActions();
 
   const player = useAudioPlayer(null, { updateInterval: 500 });
   const status = useAudioPlayerStatus(player);
@@ -97,8 +100,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const load = useCallback(
     (series: Series, sermon: Sermon) => {
-      const uri = sermon.media.audioUrl;
-      if (!uri) return;
+      if (!sermon.media.audioUrl) return;
+      const uri = downloads.localUri(sermon.id) ?? sermon.media.audioUrl;
       if (loadedId.current === sermon.id) {
         player.play();
         return;
@@ -111,6 +114,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       pendingStart.current = start > 0 ? start : null;
       player.replace({ uri });
       if (start === 0) player.play();
+      downloads.fetchAhead(series, sermon.id, progress);
       player.setActiveForLockScreen(
         true,
         {
@@ -122,7 +126,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         { showSeekBackward: true, showSeekForward: true, seekBackwardIntervalSeconds: 15, seekForwardIntervalSeconds: 30 },
       );
     },
-    [lib, player, progress, saveCurrent],
+    [downloads, lib, player, progress, saveCurrent],
   );
 
   // A resumed sermon: seek once its source has loaded, then play. (Keyed on duration too, since the
@@ -145,9 +149,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, [current, load]);
 
   // Latest values for the status listener below, which subscribes once.
-  const latest = useRef({ current, next, record });
+  const latest = useRef({ current, next, record, heard: downloads.heard });
   useEffect(() => {
-    latest.current = { current, next, record };
+    latest.current = { current, next, record, heard: downloads.heard };
   });
 
   // Save progress while playing (every few seconds) and on pause; at the end of a sermon, mark it heard
@@ -155,11 +159,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let wasPlaying = false;
     const sub = player.addListener("playbackStatusUpdate", (s) => {
-      const { current: cur, next: advance, record: save } = latest.current;
+      const { current: cur, next: advance, record: save, heard } = latest.current;
       if (!cur || loadedId.current !== cur.sermon.id || s.duration <= 0) return;
       if (s.didJustFinish) {
         save(cur.sermon.id, s.duration, s.duration);
         advance();
+        heard(cur.sermon.id); // after advancing: drop a fetched-ahead copy once heard
       } else if ((wasPlaying && !s.playing) || (s.playing && Math.abs(s.currentTime - lastSavedAt.current) >= SAVE_EVERY_SECONDS)) {
         save(cur.sermon.id, s.currentTime, s.duration);
       }

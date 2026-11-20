@@ -30,8 +30,16 @@ IN_PROGRESS_DAYS = 28  # last sermon this recent => isComplete false
 
 
 def collect(
-    cfg: SourceConfig, fetcher: Fetcher, *, scrape: bool = True, archive_pages: int = 0
+    cfg: SourceConfig,
+    fetcher: Fetcher,
+    *,
+    scrape: bool = True,
+    archive_pages: int = 0,
+    scraped_out: list[RawSermon] | None = None,
 ) -> tuple[list[RawSermon], policy.MergeReport]:
+    """Feed items + scraped backfill, merged with the feed winning. `scraped_out`, if given, receives
+    the scraped records unmerged, for writing the church's archive (snapshot.py); only from scrapers
+    with `updates_snapshot`."""
     rss_items: list[RawSermon] = []
     for url in cfg.rss_urls:
         # Any exception here propagates: policy rule 2, never fall back to scraping.
@@ -44,6 +52,8 @@ def collect(
         scraper = get_scraper(cfg.scraper)(cfg, fetcher, archive_pages=archive_pages, rss_items=rss_items)
         scraped = scraper.run()
         log.info("%s: scraper fetched %d pages", cfg.church_id, scraper.pages_fetched)
+        if scraped_out is not None and scraper.updates_snapshot:
+            scraped_out.extend(scraped)
 
     merged, report = policy.merge_prefer_rss(rss_items, scraped)
     policy.assert_rss_precedence(rss_items, merged)

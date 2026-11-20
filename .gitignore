@@ -2,6 +2,8 @@
 library.json
 library-*.json
 !schema/library.example.json
+# The copy bundled into the app (app/scripts/bundle-library.mjs); uploaded to EAS via .easignore.
+app/src/data/library.bundled.json
 
 # OS / editors
 .DS_Store

@@ -10,6 +10,7 @@ src/app/            expo-router routes (file = screen)
   series/[id].tsx   one series' sermons in preached order; tap to play
   player.tsx        full-screen player (modal)
 src/player/         playback: PlayerProvider (one expo-audio player), rules.ts (pure, tested), storage.ts
+src/downloads/      offline listening: DownloadsProvider (queue, expo-file-system), rules.ts (pure, tested), storage.ts
 src/data/           loading + pure selectors (no React in selectors.ts)
 src/types/library.ts hand-mirrored schema types: change the schema first, then this
 src/components/     shared UI (placeholder styling until the design phase)
@@ -33,7 +34,17 @@ npx expo install --fix   # align native module versions with the Expo SDK
 npm start                # Expo dev server (i = iOS simulator, a = Android)
 npm run typecheck && npm run lint && npm test
 ```
-Set `EXPO_PUBLIC_LIBRARY_URL` (see `.env.example`) to read a published library; unset, the app uses the bundled example.
+The app ships `src/data/library.bundled.json` (gitignored; private, nothing fetched at launch). `npm run bundle-library` copies `../pipeline/out/library.json` there; `postinstall` creates it if missing (pipeline build, else the schema example). Rebuild the app to update it. Set `EXPO_PUBLIC_LIBRARY_URL` (see `.env.example`) to fetch a library instead (development).
+
+## iOS build (private, ad hoc / EAS internal distribution)
+Personal use only: installed from a link on registered devices; not on TestFlight or the App Store.
+```bash
+npx eas-cli device:create         # once per iPhone: register its UDID (before building)
+npm run bundle-library            # after a pipeline build
+npx eas-cli build -p ios --profile personal
+```
+Open the build's install link on the iPhone (Developer Mode must be on: Settings → Privacy & Security). A build runs only on devices registered when it was built; register a new phone, then rebuild. The provisioning profile lasts about a year.
+EAS uploads per `../.easignore` (not .gitignore), which is how the bundled library reaches the cloud build.
 
 ## Playback
 - One player for the app (`PlayerProvider`). `usePlayer()` = what's playing, saved progress, actions; `usePlayerStatus()` = live position (2×/s). Only read the status context where live position is shown, so lists don't re-render while audio plays.
@@ -41,5 +52,12 @@ Set `EXPO_PUBLIC_LIBRARY_URL` (see `.env.example`) to read a published library; 
 - At the end of a sermon, playback advances to the next sermon **with audio** in array order (`adjacentPlayable`).
 - Lock-screen controls are seek −15/+30 (expo-audio has no remote next/previous for a single player). Background audio and lock-screen controls need a dev build (`npx expo run:ios`); Expo Go only covers foreground playback.
 
+## Offline listening
+- Audio downloads go to `<documents>/audio/<sermon.id>.<ext>` (iOS doesn't purge it when storage is low). Metadata lives in AsyncStorage (`download:v1:<id>`) and is written only once the file is complete: downloads land as `.part` first, and `loadDownloads` deletes orphans on launch.
+- The player plays the local file when one exists, and streams otherwise. A sermon that is already streaming is not switched to its new download mid-play; the next time it loads, it plays locally.
+- **Manual** (download button on a row, or "Download series"): kept until removed. **Auto**: when a sermon starts, it and the next `AUTO_AHEAD` (2) unheard sermons with audio are fetched, and each is deleted once heard to the end. Tapping download on an auto copy makes it manual.
+- One download at a time. Mobile data is used too (no Wi-Fi-only setting yet). All Souls files are about 12–18 MB.
+- `useDownloadActions()` is stable (the player uses it); `useDownloads()` changes with progress, so read it only where download state is shown.
+
 ## Not built yet
-Favourites, offline cache of library.json, downloads for offline listening, YouTube/video playback, search, design system.
+Favourites, hosted library.json with on-device cache, a Downloads screen (all downloads, storage used), Wi-Fi-only auto downloads, switching to a download mid-play, YouTube/video playback, search, design system.

@@ -6,6 +6,8 @@ Pages used (allowed by robots.txt, Crawl-delay 10s):
   - GET  /Groups/<id>/<Series>.aspx  series page: every sermon in that series.
   - POST /Media/AllMedia.aspx        archive listing pages 2..N (ASP.NET postback paging,
                                      ~646 pages back to the 1970s). Only when archive_pages > 0.
+Plus the committed archive (`snapshot` in the source config): every sermon seen by earlier scrapes,
+seeded from the full crawl, so a normal build needs only page 1 and the series pages.
 
 Audio for sermons not in the feed uses the site's own download link
 (/Media/PlayMedia.aspx?download=file&media_id=M&file_id=F), which 302s to the same MP3 the feed uses.
@@ -20,6 +22,7 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup, Tag
 
 from ..models import RawSermon
+from ..snapshot import read_snapshot
 from ..normalize import clean_title, collapse_ws, parse_duration, parse_series_label, series_key, youtube_id
 from . import Scraper
 
@@ -30,6 +33,7 @@ _LENGTH = re.compile(r"^(?:(\d+)\s*hours?\s*)?(\d+)\s*minutes?$")
 
 class AllSoulsScraper(Scraper):
     name = "allsouls"
+    updates_snapshot = True
 
     def run(self) -> list[RawSermon]:
         out: list[RawSermon] = []
@@ -41,6 +45,10 @@ class AllSoulsScraper(Scraper):
             series_pages.extend(r.series_url for r in rows if r.series_url)
             if self.archive_pages > 0:
                 out.extend(self._crawl_archive(first))
+        # The committed archive goes after the listing pages and before the series pages: the same
+        # place the archive listing pages it was made from had, so a build from it matches a full crawl.
+        if self.cfg.snapshot_path:
+            out.extend(read_snapshot(self.cfg.snapshot_path))
         series_pages.extend(self.cfg.series_pages)
         for url in dict.fromkeys(series_pages):  # de-dupe, keep order
             out.extend(parse_series_page(self.fetch_page(url), url))

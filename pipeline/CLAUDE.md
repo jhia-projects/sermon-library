@@ -10,9 +10,11 @@ uv run sermon-pipeline check-sources           # enforce RSS-first config policy
 uv run sermon-pipeline build --out out/library.json            # live: RSS + scrape backfill
 uv run sermon-pipeline build --no-scrape --out out/library.json # live: RSS only
 uv run sermon-pipeline build --archive-pages 5 --out out/library.json # + 5 archive pages (~10s each)
+uv run sermon-pipeline build --update-snapshot --out out/library.json # + add newly scraped All Souls sermons to data/
+uv run sermon-pipeline build --report data/series-report.txt --out out/library.json # + series log per church (what the weekly PR diffs)
 uv run sermon-pipeline validate out/library.json
 uv run sermon-pipeline review-names out/library.json            # near-duplicate names
-uv run sermon-pipeline crawl-sthelens --limit 5                 # St Helen's: sitemaps + 5 new talk pages (cached), rewrites the snapshot
+uv run sermon-pipeline crawl-sthelens --limit 5                 # St Helen's: sitemaps + 5 new talk pages (cached), added to the snapshot
 uv run sermon-pipeline crawl-sthelens --newest --limit 300      # walk from the latest talk id instead
 uv run sermon-pipeline crawl-sthelens --id 59581 --id 59476     # specific talk ids
 ```
@@ -41,8 +43,22 @@ src/sermon_pipeline/
   validate.py    schema + referential integrity (gate before writing)
   http.py        PoliteFetcher: robots.txt, Crawl-delay (min 2s, optional jitter), https only
   crawl.py       CachedCrawler: disk cache so no URL is fetched twice; re-run to resume
+  snapshot.py    committed sermon archive (JSON lines): read/write, scraped data only
+data/<church-id>/             committed archive of every scraped sermon (`[scrape].snapshot`)
 tests/fixtures/<church-id>/   saved feed + pages; tests never hit the network
 ```
+
+## Archive (snapshot.py, `data/<church-id>/`)
+A church's scraped history is committed, so a build covers it without re-crawling the site.
+- It is scraped data (origin `scrape`): merged after the feed, so the feed still wins (RSS-first rule 4).
+- **All Souls** (`data/all-souls-langham-place/sermons.jsonl`, 6,461 sermons, 1971–2026): the scraper reads page 1, then the archive, then the series pages. `build --update-snapshot` writes back, after validation passes, every sermon that build scraped plus the archive, one row per `source_key`, first seen wins.
+- **Keep the listing order (newest first); never sort the file.** A series' display name is its most common spelling and a tie goes to the first sermon read, so sorting by id renamed 9 series (`REAL LIVES` vs `Real Lives`).
+- Only scrapers with `updates_snapshot = True` are written back. St Helen's is not: it drops midweek talks when reading, and `crawl-sthelens` owns `talks.jsonl`.
+- Tests use fixtures only: the `all_souls` fixture sets `snapshot=None`. `test_snapshot.py` checks the committed file loads.
+- Verified 2026-11-20: archive + page 1 gives the same `library.json` and `+ - ~` log as a full 653-page crawl (527 series / 3,346 sermons, 568 skipped).
+
+## Weekly run (`../.github/workflows/pipeline.yml`)
+Mondays 06:00 UTC, or by hand from the Actions tab. Tests and `check-sources`, then `crawl-sthelens --newest --limit 50`, then `build --update-snapshot --report data/series-report.txt`. Any failure stops the run and nothing is committed. Changes under `data/` go to one PR (branch `weekly-library`, updated in place until merged). Review the diff of `series-report.txt` (and any near-duplicate names in the PR body) before merging. `library.json` and `build.log` are attached to the run (30 days). The app bundles the library, so the phone updates only when the app is rebuilt.
 
 ## Series rules (build.py; re-checked in validate.py)
 This is the app's core feature; read `../docs/series-derivation.md` before changing it.
@@ -66,15 +82,15 @@ Use `/add-church`. In short: find the feed first (site `<link rel=alternate>`, p
 ## All Souls notes
 - Feed: `https://www.allsouls.org/Media/rss.xml`, about 12 months / ~100 items. guid `m_<media_id>`.
 - The scraper reads `/Media/AllMedia.aspx` page 1, the series pages it links to (`/Groups/<id>/<Name>.aspx`) and any listed in `series_pages`.
-- Archive: ~646 listing pages back to the 1970s, paged by ASP.NET postback (POST the page's own form with `hidden_page=N`). Crawled only with `--archive-pages N`; at Crawl-delay 10s a full crawl takes about 2 hours. Not yet run in full: only page 600 (Nov 1977) was tested, and it's the `archive_page_600.html` fixture.
-- The feed prints one reference per sermon (in the title); the listing's `References:` line can print several, and that's often where the in-book one is (e.g. a Psalm 22 sermon in a Mark series lists Mark 15:16-32). Series with OT "interludes" therefore usually need the listing rows, from page 1 or `--archive-pages`, to pass the 100% rule.
+- Archive: ~646 listing pages back to the 1970s, paged by ASP.NET postback (POST the page's own form with `hidden_page=N`). Crawled only with `--archive-pages N`; at Crawl-delay 10s a full crawl takes about 2 hours. Run in full once (653 pages, back to 1971) to seed the archive; builds don't need it again. Its raw pages are cached (gitignored) in `out/all-souls-langham-place/cache/`. Page 600 (Nov 1977) is the `archive_page_600.html` fixture.
+- The feed prints one reference per sermon (in the title); the listing's `References:` line can print several, and that's often where the in-book one is (e.g. a Psalm 22 sermon in a Mark series lists Mark 15:16-32). Series with OT "interludes" therefore usually need the listing rows (page 1 or the archive) to pass the book-share rule.
 - Archive rows differ from recent ones: `Reference:` (singular); file title `MP3 Audio` with format `64Kbps 13.4MB`; duration only as `Length: 29 minutes` (not parsed); group links carry a catalogue code (`ZA008 Genesis`); quoted titles (`'Did God say?'`).
 - robots.txt: `Crawl-delay: 10`. `/Media/` and `/Groups/` are allowed.
 - Known data quirks: `.mp3` in titles, `No Favorites`/`No Favourites`, `Ollie Lansdown` → aliased to `Ollie Lansdowne` (confirmed).
 
 ## St Helen's Bishopsgate notes (build source; permission pending)
 - `sources/st-helens-bishopsgate.toml`: **Sunday feed only** (`format = "sthelens"`) + scraper `sthelens` with `sunday_only = true`. Permission from the church is pending.
-- Data = feed (latest 20) + a one-off crawl. `crawl-sthelens` caches talk pages in `out/st-helens-bishopsgate/cache/` (2–3s per request, resumable, `--limit` counts new pages, `--newest` walks from the latest id) and rewrites the committed snapshot `data/st-helens-bishopsgate/talks.jsonl` from every cached page. Each build reads the snapshot and fetches only the talk pages of feed talks missing from it, which is where their series label is printed. The merge keeps feed values; pages add series, page URL, series URL. Pipeline-wide UA is `sermonorganiser/0.1`.
+- Data = feed (latest 20) + a one-off crawl. `crawl-sthelens` caches talk pages in `out/st-helens-bishopsgate/cache/` (2–3s per request, resumable, `--limit` counts new pages, `--newest` walks from the latest id) and adds every cached page to the committed snapshot `data/st-helens-bishopsgate/talks.jsonl`. The snapshot is only ever added to, and talks already in it count as crawled, so a run with an empty cache (CI) fetches only new talks. Each build reads the snapshot and fetches only the talk pages of feed talks missing from it, which is where their series label is printed. The merge keeps feed values; pages add series, page URL, series URL. Pipeline-wide UA is `sermonorganiser/0.1`.
 - Build history (2026-11-19): RSS only: 0 series (all `no series`). Feed + 7-talk snapshot: 4 series / 20 sermons. Feed + 307-talk snapshot (Feb–Nov 2026): 16 series / 149 sermons without `one_per_service_half`, **15 / 81 with it** (78 copies dropped; "A defining moment" became a single sermon and is skipped). 1,307-talk snapshot (2023-07 on): 50 series / 382 sermons, 29 skipped. 2,307 talks (2021-01 on): 103 series / 698 sermons before stripping `(4pm)`-style label suffixes (17 overlapping same-book series pairs), 92 / 633 after + typo alias (6 pairs left: per-service series with different names, e.g. "Parables of the kingdom" 4pm / "The secrets of heaven" 6pm, both Matthew 13: not merged without a decision). Decided (user, 2026-11-20): per-service series with different names stay separate.
 - Weekend-away sessions ("…: 4pm weekend", "Haggai - 10:30am weekend away") publish as 2-sermon Sunday-only fragments (Saturday sessions are filtered out). Decided (user, 2026-11-20): keep weekend series only if they work through one book; drop topical ones. Implemented as `event_patterns = ["weekend"]` (forward-progression check), plus `"week of talks"` in `exclude_patterns`. Pre-2000 talks dated 1 January are year-only placeholders: `placeholder_dates = ["01-01"]`.
 - Evening "copies" are often distinct talks: 4pm and 6pm run the same series with different speakers, and in 20 of 78 slots the title or passage differs (e.g. 2026-02-22: 1 Kings 21 at 4pm, 1 Kings 22 at 6pm). The rule keeps the earliest service consistently, so a series follows one congregation (9.30am, 4pm). Splitting by service into separate series is the alternative if the 6pm talks are wanted.

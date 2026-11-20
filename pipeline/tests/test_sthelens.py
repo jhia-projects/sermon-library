@@ -185,6 +185,17 @@ def test_crawl_resumes_and_limit_counts_new_pages(tmp_path: Path):
     assert keys == ["2", "4", "5"]
 
 
+def test_crawl_with_empty_cache_adds_to_the_snapshot(tmp_path: Path):
+    """CI has no page cache: a crawl must add new talks and keep the snapshot's rows, never shrink
+    the snapshot to the pages it happened to fetch."""
+    snap = tmp_path / "talks.jsonl"
+    crawl(tmp_path / "a", limit=2, snapshot=snap, fetcher=FakeFetcher(crawl_pages()))  # talks 2, 4
+    fake = FakeFetcher(crawl_pages())
+    crawl(tmp_path / "b", limit=5, snapshot=snap, fetcher=fake)  # fresh cache
+    assert f"{BASE}/resources/talk/2/" not in fake.calls  # already in the snapshot: not re-fetched
+    assert [s.source_key for s in sthelens.read_snapshot(snap)] == ["2", "4", "5"]
+
+
 def test_crawl_newest_first(tmp_path: Path):
     pages = crawl_pages() | {f"{BASE}/resources/talk/59583/": SH / "talk_4.html"}
     fake = FakeFetcher(pages)

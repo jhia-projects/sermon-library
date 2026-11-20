@@ -1,7 +1,7 @@
 /** Pure lookups over a Library. Keep screens thin: query here, render there. */
 import { BOOKS } from "./books";
 
-import type { Book, BookCode, Library, Sermon, Series } from "@/types/library";
+import type { Book, BookCode, Library, Sermon, Series, Speaker } from "@/types/library";
 
 const newestFirst = (a: Series, b: Series) => b.endDate.localeCompare(a.endDate);
 
@@ -60,4 +60,33 @@ export function speakerName(lib: Library, id: string): string {
 
 export function churchName(lib: Library, id: string): string {
   return lib.churches.find((c) => c.id === id)?.name ?? id;
+}
+
+const hasFullName = (name: string) => name.trim().split(/\s+/).length >= 2;
+
+export type SpeakerRow = { speaker: Speaker; seriesCount: number };
+
+/** Case- and accent-insensitive form for name search ("Jané" -> "jane"). */
+const fold = (s: string) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+/**
+ * Speakers tab rows, by name. With no query, only speakers with at least `minSeries` series and a full
+ * name (a lone first name like "Luke" is ambiguous); with a query, every speaker whose name contains
+ * each word, regardless of either rule.
+ * A series with several speakers counts for each of them.
+ */
+export function speakerRows(lib: Library, query = "", minSeries = 5): SpeakerRow[] {
+  const counts = new Map<string, number>();
+  for (const s of lib.series) for (const id of s.speakerIds) counts.set(id, (counts.get(id) ?? 0) + 1);
+
+  const words = fold(query).split(/\s+/).filter(Boolean);
+  return lib.speakers
+    .map((speaker) => ({ speaker, seriesCount: counts.get(speaker.id) ?? 0 }))
+    .filter(({ speaker, seriesCount }) =>
+      words.length === 0
+        ? seriesCount >= minSeries && hasFullName(speaker.name)
+        : words.every((w) => fold(speaker.name).includes(w)),
+    )
+    .sort((a, b) => a.speaker.name.localeCompare(b.speaker.name));
 }
